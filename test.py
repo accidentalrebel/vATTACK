@@ -12,11 +12,15 @@ G.add_node("B", name="APT-C-36", category='threat_group')
 G.add_node("C", name="APT18", category='threat_group')
 G.add_node("D", name="APT28 ", category='threat_group')
 G.add_node("E", name="Network Intrusion Prevention", category='prevention')
+G.add_node("F", name="Auditcred", category='malware')
+G.add_node("G", name="BadPatch", category='malware')
 
 G.add_edge('A', 'B')
 G.add_edge('A', 'C')
 G.add_edge('A', 'D')
 G.add_edge('A', 'E')
+G.add_edge('A', 'F')
+G.add_edge('A', 'G')
 G.add_edge('C', 'D')
 # G.add_edge('B', 'D')
 # G.add_edge('C', 'D')
@@ -68,6 +72,8 @@ for node in G.nodes:
         colors.append('#ff0000')
     elif cat == 'prevention':
         colors.append('#d9ff00')
+    elif cat == 'malware':
+        colors.append('#ff8800')
     else:
         colors.append('#ff00ff')
 
