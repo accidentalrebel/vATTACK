@@ -54,6 +54,7 @@ node_x = []
 node_y = []
 names = []
 colors = []
+categories = []
 
 node_names = nx.get_node_attributes(G, "name")
 node_categories = nx.get_node_attributes(G, "category")
@@ -68,6 +69,8 @@ for node in G.nodes:
     node_y.append(y)
 
     cat = node_categories[node[0]]
+    categories.append(cat)
+    
     if cat == 'threat_group':
         colors.append('#ff0000')
     elif cat == 'prevention':
@@ -81,6 +84,7 @@ node_trace = go.Scatter(
     x=node_x, y=node_y,
     mode='markers+text',
     hoverinfo='text',
+    hovertext=categories,
     text=names,
     textfont=dict(
         size=16,
