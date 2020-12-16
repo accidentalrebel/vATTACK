@@ -11,15 +11,18 @@ G.add_node("A", name="T1105")
 G.add_node("B", name="APT-C-36")
 G.add_node("C", name="APT18")
 G.add_node("D", name="APT28 ")
+G.add_node("E", name="E ")
 
 G.add_edge('A', 'B')
 G.add_edge('A', 'C')
 G.add_edge('A', 'D')
+G.add_edge('A', 'E')
 G.add_edge('C', 'D')
 # G.add_edge('B', 'D')
 # G.add_edge('C', 'D')
 
-pos = nx.spring_layout(G)
+fixed_pos = {'A':(0,0)}
+pos = nx.spring_layout(G, pos=fixed_pos, fixed=['A']) #, 'B'])
 print(pos)
 
 edge_x = []
@@ -66,6 +69,7 @@ node_trace = go.Scatter(
     textfont=dict(
         size=32
         ),
+    textposition='top center',
     marker=dict(
         showscale=True,
         # colorscale options
@@ -74,7 +78,8 @@ node_trace = go.Scatter(
         #'Hot' | 'Blackbody' | 'Earth' | 'Electric' | 'Viridis' |
         colorscale='YlGnBu',
         reversescale=True,
-        color=[],
+        #color=[],
+        color='#ff00ff',
         size=40,
         colorbar=dict(
             thickness=15,

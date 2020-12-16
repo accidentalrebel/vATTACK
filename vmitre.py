@@ -62,7 +62,7 @@ node_trace = go.Scatter(
         #'Greys' | 'YlGnBu' | 'Greens' | 'YlOrRd' | 'Bluered' | 'RdBu' |
         #'Reds' | 'Blues' | 'Picnic' | 'Rainbow' | 'Portland' | 'Jet' |
         #'Hot' | 'Blackbody' | 'Earth' | 'Electric' | 'Viridis' |
-        colorscale='YlGnBu',
+        colorscalbe='YlGnBu',
         reversescale=True,
         color=[],
         size=40,
