@@ -7,11 +7,11 @@ import sys
 G = nx.random_geometric_graph(50, 0.125)
 G = nx.Graph()
 
-G.add_node("A", name="T1105")
-G.add_node("B", name="APT-C-36")
-G.add_node("C", name="APT18")
-G.add_node("D", name="APT28 ")
-G.add_node("E", name="E ")
+G.add_node("A", name="T1105", category="technique")
+G.add_node("B", name="APT-C-36", category='threat_group')
+G.add_node("C", name="APT18", category='threat_group')
+G.add_node("D", name="APT28 ", category='threat_group')
+G.add_node("E", name="Network Intrusion Prevention", category='prevention')
 
 G.add_edge('A', 'B')
 G.add_edge('A', 'C')
@@ -49,8 +49,10 @@ edge_trace = go.Scatter(
 node_x = []
 node_y = []
 names = []
+colors = []
 
 node_names = nx.get_node_attributes(G, "name")
+node_categories = nx.get_node_attributes(G, "category")
 print(node_names)
 
 for node in G.nodes:
@@ -61,13 +63,22 @@ for node in G.nodes:
     node_x.append(x)
     node_y.append(y)
 
+    cat = node_categories[node[0]]
+    if cat == 'threat_group':
+        colors.append('#ff0000')
+    elif cat == 'prevention':
+        colors.append('#d9ff00')
+    else:
+        colors.append('#ff00ff')
+
 node_trace = go.Scatter(
     x=node_x, y=node_y,
     mode='markers+text',
     hoverinfo='text',
     text=names,
     textfont=dict(
-        size=32
+        size=16,
+        color='#000000'
         ),
     textposition='top center',
     marker=dict(
@@ -78,8 +89,7 @@ node_trace = go.Scatter(
         #'Hot' | 'Blackbody' | 'Earth' | 'Electric' | 'Viridis' |
         colorscale='YlGnBu',
         reversescale=True,
-        #color=[],
-        color='#ff00ff',
+        color=colors,
         size=40,
         colorbar=dict(
             thickness=15,
