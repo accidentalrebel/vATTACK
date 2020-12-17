@@ -81,6 +81,27 @@ def index():
     pos = nx.spring_layout(G, pos=fixed_pos, fixed=['A']) #, 'B'])
     print(pos)
 
+    # Adjust positions for grouping
+    node_names = nx.get_node_attributes(G, "name")
+    node_categories = nx.get_node_attributes(G, "category")
+
+    for node in G.nodes:
+        print(node)
+        cat = node_categories[node]
+        if cat == 'threat_group':
+            pos[node][0] += 1
+            pos[node][1] += 1
+        elif cat == 'malware':
+            pos[node][0] -= 1
+            pos[node][1] += 1
+        elif cat == 'prevention':
+            pos[node][0] -= 1
+            pos[node][1] -= 1
+        elif cat == 'technique' and node != 'A':
+            pos[node][0] += 1
+            pos[node][1] -= 1
+
+    # Edges
     edge_x = []
     edge_y = []
     for edge in G.edges:
@@ -108,8 +129,6 @@ def index():
     colors = []
     categories = []
 
-    node_names = nx.get_node_attributes(G, "name")
-    node_categories = nx.get_node_attributes(G, "category")
     print(node_names)
 
     for node in G.nodes:
