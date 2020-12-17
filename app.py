@@ -181,13 +181,6 @@ def index():
             line_width=4))
 
     ## DRAW
-    print(node_trace)
-
-    def on_clicked(trace, points, selector):
-        inds = points.point_inds
-
-    node_trace.on_click(on_clicked)
-
     fig = go.Figure(data=[edge_trace, node_trace],
                  layout=go.Layout(
                     # title='<br>VAtt&ck made with Python',
