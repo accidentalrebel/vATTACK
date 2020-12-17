@@ -8,6 +8,8 @@ import json
 app = Flask(__name__)
 app.debug = True
 
+config = {'displayModeBar': False}
+
 @app.route('/')
 def index():
     points, state = Points(), InputDeviceState()
@@ -127,13 +129,13 @@ def index():
 
     fig = go.Figure(data=[edge_trace, node_trace],
                  layout=go.Layout(
-                    title='<br>Network graph made with Python',
+                    title='<br>VAtt&ck made with Python',
                     titlefont_size=16,
                     showlegend=True,
                     hovermode='closest',
                     margin=dict(b=20,l=5,r=5,t=40),
                     annotations=[ dict(
-                        text="Python code: <a href='https://plotly.com/ipython-notebooks/network-graphs/'> https://plotly.com/ipython-notebooks/network-graphs/</a>",
+                        text="VAtt&ck - Visual Att&ck",
                         showarrow=False,
                         xref="paper", yref="paper",
                         x=0.005, y=-0.002 ) ],
@@ -141,5 +143,5 @@ def index():
                     yaxis=dict(showgrid=False, zeroline=False, showticklabels=False))
                     )
     
-    my_plot_div = fig.to_html(full_html=False)
+    my_plot_div = fig.to_html(full_html=False, config=config)
     return render_template('index.html', div_placeholder=Markup(my_plot_div))
