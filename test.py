@@ -1,8 +1,11 @@
 from plotly.graph_objs import Scatter, Layout
+from plotly.callbacks import Points, InputDeviceState
 import plotly.graph_objects as go
 import plotly
 import networkx as nx
 import sys
+
+points, state = Points(), InputDeviceState()
 
 G = nx.random_geometric_graph(50, 0.125)
 G = nx.Graph()
@@ -110,6 +113,12 @@ node_trace = go.Scatter(
         line_width=4))
 
 ## DRAW
+print(node_trace)
+
+def on_clicked(trace, points, selector):
+    inds = points.point_inds
+    
+node_trace.on_click(on_clicked)
 
 fig = go.Figure(data=[edge_trace, node_trace],
              layout=go.Layout(
