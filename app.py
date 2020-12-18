@@ -1,9 +1,12 @@
 from flask import Flask, render_template, Markup, request
 from plotly.callbacks import Points, InputDeviceState
+import importlib
 import plotly.graph_objects as go
 import networkx as nx
 import plotly.express as px
 import json
+
+importlib.import_module('taxii')
 
 app = Flask(__name__)
 app.debug = True
