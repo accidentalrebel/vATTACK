@@ -113,18 +113,22 @@ def groups_using_software(thesrc):
     """returns software_id => {group, relationship} for each group using the software."""
     return get_related(thesrc, "intrusion-set", "uses", "tool", reverse=True) | get_related(thesrc, "intrusion-set", "uses", "malware", reverse=True)
 
-def groups_using_technique(thesrc):
+def get_groups_using_any_technique(thesrc):
     """returns technique_id => {group, relationship} for each group using the technique."""
     return get_related(thesrc, "intrusion-set", "uses", "attack-pattern", reverse=True)
 
-print('Getting technique by name')
+def get_groups_using_technique(thesrc, technique_id):
+    all_groups = get_groups_using_any_technique(src)
+    return all_groups[technique[0]['id']]
 
-# get the technique titled 'System Information Discovery'
+print('Getting technique by name')
 technique = get_technique_by_name(src, 'System Information Discovery')
 print(str(technique))
 
-all_groups = groups_using_technique(src)
-groups = all_groups[technique[0]['id']]
+technique_id = technique[0]['id']
+print('technique_id is ' + technique_id)
+
+groups = get_groups_using_technique(src, technique_id)
 
 for g in groups:
     print('>>')
