@@ -17,7 +17,7 @@ def index():
     if request.method == 'POST':
         group = request.form.get('group')
         can_group = True
-        print('group')
+        print('#######' + group)
     
     points, state = Points(), InputDeviceState()
 
