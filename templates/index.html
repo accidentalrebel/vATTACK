@@ -2,7 +2,13 @@
   <body>
     <a href="{{ url_for('index') }}">Reload</a>
     <form action="{{ url_for('index') }}" method='POST'>
-      <button value="{{ grouped }}" name="group" type="submit">Group</button>
+      <button value="{{ grouped }}" name="group" type="submit">
+      {% if grouped %}
+      Ungroup
+      {% else %}
+      Group
+      {% endif %}
+      </button>
     </form>
     {{ div_placeholder }}
   </body>
