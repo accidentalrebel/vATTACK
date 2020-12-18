@@ -33,6 +33,120 @@ def get_technique_by_name(thesrc, name):
     ]
     return thesrc.query(filt)
 
+def get_related(thesrc, src_type, rel_type, target_type, reverse=False):
+    """build relationship mappings
+       params:
+         thesrc: MemoryStore to build relationship lookups for
+         src_type: source type for the relationships, e.g "attack-pattern"
+         rel_type: relationship type for the relationships, e.g "uses"
+         target_type: target type for the relationship, e.g "intrusion-set"
+         reverse: build reverse mapping of target to source
+    """
+
+    relationships = thesrc.query([
+        Filter('type', '=', 'relationship'),
+        Filter('relationship_type', '=', rel_type)
+    ])
+
+    # stix_id => [ { relationship, related_object_id } for each related object ]
+    id_to_related = {} 
+
+    # build the dict
+    for relationship in relationships:
+        if (src_type in relationship.source_ref and target_type in relationship.target_ref):
+            if (relationship.source_ref in id_to_related and not reverse) or (relationship.target_ref in id_to_related and reverse):
+                # append to existing entry
+                if not reverse: 
+                    id_to_related[relationship.source_ref].append({
+                        "relationship": relationship,
+                        "id": relationship.target_ref
+                    })
+                else: 
+                    id_to_related[relationship.target_ref].append({
+                        "relationship": relationship, 
+                        "id": relationship.source_ref
+                    })
+            else: 
+                # create a new entry
+                if not reverse: 
+                    id_to_related[relationship.source_ref] = [{
+                        "relationship": relationship, 
+                        "id": relationship.target_ref
+                    }]
+                else:
+                    id_to_related[relationship.target_ref] = [{
+                        "relationship": relationship, 
+                        "id": relationship.source_ref
+                    }]
+    # all objects of relevant type
+    if not reverse:
+        targets = thesrc.query([
+            Filter('type', '=', target_type),
+            Filter('revoked', '=', False)
+        ])
+    else:
+        targets = thesrc.query([
+            Filter('type', '=', src_type),
+            Filter('revoked', '=', False)
+        ])
+
+    # build lookup of stixID to stix object
+    id_to_target = {}
+    for target in targets:
+        id_to_target[target.id] = target
+
+    # build final output mappings
+    output = {}
+    for stix_id in id_to_related:
+        value = []
+        for related in id_to_related[stix_id]:
+            if not related["id"] in id_to_target:
+                continue # targeting a revoked object
+            value.append({
+                "object": id_to_target[related["id"]],
+                "relationship": related["relationship"]
+            })
+        output[stix_id] = value
+    return output
+
+def groups_using_software(thesrc):
+    """returns software_id => {group, relationship} for each group using the software."""
+    return get_related(thesrc, "intrusion-set", "uses", "tool", reverse=True) | get_related(thesrc, "intrusion-set", "uses", "malware", reverse=True)
+
+def groups_using_technique(thesrc):
+    """returns technique_id => {group, relationship} for each group using the technique."""
+    return get_related(thesrc, "intrusion-set", "uses", "attack-pattern", reverse=True)
+
 print('Getting technique by name')
 # get the technique titled 'System Information Discovery'
 print(get_technique_by_name(src, 'System Information Discovery'))
+
+groups = groups_using_technique(src)
+for g in groups:
+    print('>> ' + g)
+    if g == 'attack-pattern--354a7f88-63fb-41b5-a801-ce3b377b36f1':
+        print('FOUND')
+        print(str(groups[g]))
+
+        print('\n\nFINDING')
+        for elem in groups[g]:
+            print('>>')
+            print(str(elem['object']['name']))
+            print(str(elem['relationship']['source_ref'] + " " + elem['relationship']['relationship_type']) + " " + elem['relationship']['target_ref'])
+            print('\n')
+
+        break
+
+# group_id_to_software = groups_using_software(src)
+# for g in group_id_to_software:
+#     print('>> ' + g)
+#     check_id = group_id_to_software[g][0]['relationship']['source_ref']
+#     print('>>> ' + check_id)
+#     if check_id == 'intrusion-set--2a158b0a-7ef8-43cb-9985-bf34d1e12050':
+#         print('FOUND IT')
+#         print(str(group_id_to_software[g]))
+#         break
+    
+# group_id_to_software["intrusion-set--2a158b0a-7ef8-43cb-9985-bf34d1e12050"]
+
+# print(">> " + str(group_id_to_software["malware--8b880b41-5139-4807-baa9-309690218719"]))
