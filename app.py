@@ -1,4 +1,4 @@
-from flask import Flask, render_template, Markup
+from flask import Flask, render_template, Markup, request
 from plotly.callbacks import Points, InputDeviceState
 import plotly.graph_objects as go
 import networkx as nx
@@ -10,8 +10,15 @@ app.debug = True
 
 config = {'displayModeBar': False}
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
+    can_group = False
+    
+    if request.method == 'POST':
+        group = request.form.get('group')
+        can_group = True
+        print('group')
+    
     points, state = Points(), InputDeviceState()
 
     G = nx.random_geometric_graph(50, 0.125)
@@ -81,25 +88,26 @@ def index():
     pos = nx.spring_layout(G, pos=fixed_pos, fixed=['A']) #, 'B'])
     print(pos)
 
-    # Adjust positions for grouping
     node_names = nx.get_node_attributes(G, "name")
     node_categories = nx.get_node_attributes(G, "category")
-
-    for node in G.nodes:
-        print(node)
-        cat = node_categories[node]
-        if cat == 'threat_group':
-            pos[node][0] += 1
-            pos[node][1] += 1
-        elif cat == 'malware':
-            pos[node][0] -= 1
-            pos[node][1] += 1
-        elif cat == 'prevention':
-            pos[node][0] -= 1
-            pos[node][1] -= 1
-        elif cat == 'technique' and node != 'A':
-            pos[node][0] += 1
-            pos[node][1] -= 1
+    
+    if can_group:
+        # Adjust positions for grouping
+        for node in G.nodes:
+            print(node)
+            cat = node_categories[node]
+            if cat == 'threat_group':
+                pos[node][0] += 1
+                pos[node][1] += 1
+            elif cat == 'malware':
+                pos[node][0] -= 1
+                pos[node][1] += 1
+            elif cat == 'prevention':
+                pos[node][0] -= 1
+                pos[node][1] -= 1
+            elif cat == 'technique' and node != 'A':
+                pos[node][0] += 1
+                pos[node][1] -= 1
 
     # Edges
     edge_x = []
