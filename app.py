@@ -16,9 +16,11 @@ def index():
     
     if request.method == 'POST':
         group = request.form.get('group')
-        can_group = True
-        print('#######' + group)
-    
+        if group == 'False':
+            can_group = True
+        else:
+            can_group = False
+
     points, state = Points(), InputDeviceState()
 
     G = nx.random_geometric_graph(50, 0.125)
@@ -86,7 +88,6 @@ def index():
 
     fixed_pos = {'A':(0,0)}
     pos = nx.spring_layout(G, pos=fixed_pos, fixed=['A']) #, 'B'])
-    print(pos)
 
     node_names = nx.get_node_attributes(G, "name")
     node_categories = nx.get_node_attributes(G, "category")
@@ -94,7 +95,6 @@ def index():
     if can_group:
         # Adjust positions for grouping
         for node in G.nodes:
-            print(node)
             cat = node_categories[node]
             if cat == 'threat_group':
                 pos[node][0] += 1
@@ -137,10 +137,7 @@ def index():
     colors = []
     categories = []
 
-    print(node_names)
-
     for node in G.nodes:
-        print(node)
         names.append(node_names[node])
         # names.append(node)
         x,y = pos[node]
@@ -206,4 +203,4 @@ def index():
                     )
     
     my_plot_div = fig.to_html(full_html=False, config=config)
-    return render_template('index.html', div_placeholder=Markup(my_plot_div))
+    return render_template('index.html', div_placeholder=Markup(my_plot_div), grouped=can_group)
