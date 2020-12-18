@@ -118,35 +118,16 @@ def groups_using_technique(thesrc):
     return get_related(thesrc, "intrusion-set", "uses", "attack-pattern", reverse=True)
 
 print('Getting technique by name')
+
 # get the technique titled 'System Information Discovery'
-print(get_technique_by_name(src, 'System Information Discovery'))
+technique = get_technique_by_name(src, 'System Information Discovery')
+print(str(technique))
 
-groups = groups_using_technique(src)
+all_groups = groups_using_technique(src)
+groups = all_groups[technique[0]['id']]
+
 for g in groups:
-    print('>> ' + g)
-    if g == 'attack-pattern--354a7f88-63fb-41b5-a801-ce3b377b36f1':
-        print('FOUND')
-        print(str(groups[g]))
-
-        print('\n\nFINDING')
-        for elem in groups[g]:
-            print('>>')
-            print(str(elem['object']['name']))
-            print(str(elem['relationship']['source_ref'] + " " + elem['relationship']['relationship_type']) + " " + elem['relationship']['target_ref'])
-            print('\n')
-
-        break
-
-# group_id_to_software = groups_using_software(src)
-# for g in group_id_to_software:
-#     print('>> ' + g)
-#     check_id = group_id_to_software[g][0]['relationship']['source_ref']
-#     print('>>> ' + check_id)
-#     if check_id == 'intrusion-set--2a158b0a-7ef8-43cb-9985-bf34d1e12050':
-#         print('FOUND IT')
-#         print(str(group_id_to_software[g]))
-#         break
-    
-# group_id_to_software["intrusion-set--2a158b0a-7ef8-43cb-9985-bf34d1e12050"]
-
-# print(">> " + str(group_id_to_software["malware--8b880b41-5139-4807-baa9-309690218719"]))
+    print('>>')
+    print(str(g['object']['name']))
+    print(str(g['relationship']['source_ref'] + " " + g['relationship']['relationship_type']) + " " + g['relationship']['target_ref'])
+    print('\n')
