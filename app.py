@@ -5,8 +5,9 @@ import plotly.graph_objects as go
 import networkx as nx
 import plotly.express as px
 import json
+import sys
 
-importlib.import_module('taxii')
+cti = importlib.import_module('taxii')
 
 app = Flask(__name__)
 app.debug = True
@@ -15,6 +16,10 @@ config = {'displayModeBar': False}
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    cti_src = cti.setup_cti_source()
+    technqiue_id = cti.get_groups(cti_src)
+    return 'true' + str(technqiue_id)
+    sys.exit()
     can_group = False
     
     if request.method == 'POST':

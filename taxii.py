@@ -99,6 +99,7 @@ def get_groups_using_technique(src, technique_id):
     return all_groups[technique_id]
 
 def setup_cti_source():
+    print('>> here')
     if IS_ONLINE:
         collections = {
             'enterprise_attack': '95ecc380-afe9-11e4-9b6c-751b66dd541e',
@@ -113,8 +114,10 @@ def setup_cti_source():
         collection = Collection(f'https://cti-taxii.mitre.org/stix/collections/{collections["enterprise_attack"]}/')
         print('Collection received.')
         cti_src = TAXIICollectionSource(collection)
+        print('>> there')
     else:
         cti_src = FileSystemSource('./cti/enterprise-attack')
+        print('>> everywhere ' + str(cti_src))
 
     return cti_src
 
@@ -133,6 +136,8 @@ def get_groups(cti_src):
         print(str(g['object']['name']))
         print(str(g['relationship']['source_ref'] + ' ' + g['relationship']['relationship_type']) + ' ' + g['relationship']['target_ref'])
         print('\n')
+
+    return technique_id
 
 if __name__ == "__main__":
     cti_src = setup_cti_source()
