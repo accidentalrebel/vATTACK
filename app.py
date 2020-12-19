@@ -17,21 +17,16 @@ config = {'displayModeBar': False}
 
 @app.route('/plot')
 def plot():
-    a = request.args.get('group_status')
-    # if a == 'true':
-    #     can_group = True
-                            
-    # technqiue_id = cti.get_groups(cti_src)
-    # return 'true' + str(technqiue_id)
-    # sys.exit()
-    can_group = False
+
+    is_grouped = False
     
-    if request.method == 'POST':
-        group = request.form.get('group')
-        if group == 'False':
-            can_group = True
-        else:
-            can_group = False
+    if request.method == 'GET':
+        can_group = request.args.get('can_group')
+        if can_group:
+            if can_group == 'false':
+                is_grouped = False
+            else:
+                is_grouped = True
 
     points, state = Points(), InputDeviceState()
 
@@ -104,7 +99,7 @@ def plot():
     node_names = nx.get_node_attributes(G, "name")
     node_categories = nx.get_node_attributes(G, "category")
     
-    if can_group:
+    if is_grouped:
         # Adjust positions for grouping
         for node in G.nodes:
             cat = node_categories[node]
@@ -216,7 +211,7 @@ def plot():
 
     my_plot_div = fig.to_html(full_html=False, config=config)
     
-    return render_template('plotter.html', plot_div=Markup(my_plot_div), can_group=can_group)
+    return render_template('plotter.html', plot_div=Markup(my_plot_div), is_grouped=str(is_grouped))
 
 @app.route('/', methods=['GET', 'POST'])
 def index():

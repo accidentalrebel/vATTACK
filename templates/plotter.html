@@ -1,9 +1,14 @@
 <script>
   $('#group').click(function() {
+      var can_group = false;
+      if ( "{{ is_grouped }}" == "False" )
+      {
+	  can_group = true;
+      }
       $.ajax({
 	  url: "{{ url_for('plot') }}",
 	  data: {
-	      group_status: false
+	      can_group: can_group
 	  }
       }).done(function (reply) {
 	  $('#container').html(reply);
@@ -11,12 +16,12 @@
   });
 </script>
 
-<input type="button" id="group" value="Group" />
-{% if {{ can_group }} %}
-
+<input type="button" id="group" value=
+{% if is_grouped == "True"  %}
+"Ungroup "
 {% else %}
-
+"Group "
 {% endif %}
-
+/>
 
 {{ plot_div }}
