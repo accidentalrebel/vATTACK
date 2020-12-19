@@ -6,7 +6,12 @@
     <script>
       $(document).ready( function() {
           $('#plot').click(function() {
-              $.ajax("{{ url_for('plot') }}").done(function (reply) {
+              $.ajax({
+		  url: "{{ url_for('plot') }}",
+		  data: {
+		      group_status: true
+		  }
+	      }).done(function (reply) {
 		  $('#container').html(reply);
               });
           });

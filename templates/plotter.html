@@ -1,0 +1,15 @@
+<script>
+  $('#group').click(function() {
+      $.ajax({
+	  url: "{{ url_for('plot') }}",
+	  data: {
+	      group_status: false
+	  }
+      }).done(function (reply) {
+	  $('#container').html(reply);
+      });
+  });
+</script>
+
+<input type="button" id="group" value="Group" />
+{{ plot_div }}

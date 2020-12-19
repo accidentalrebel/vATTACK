@@ -17,6 +17,10 @@ config = {'displayModeBar': False}
 
 @app.route('/plot')
 def plot():
+    a = request.args.get('group_status')
+    # if a == 'true':
+    #     can_group = True
+                            
     # technqiue_id = cti.get_groups(cti_src)
     # return 'true' + str(technqiue_id)
     # sys.exit()
@@ -212,7 +216,7 @@ def plot():
     
     my_plot_div = fig.to_html(full_html=False, config=config)
     
-    return my_plot_div
+    return render_template('plotter.html', plot_div=Markup(my_plot_div))
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
