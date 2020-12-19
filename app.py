@@ -7,8 +7,9 @@ import plotly.express as px
 import json
 import sys
 
-cti = importlib.import_module('taxii')
-cti_src = cti.setup_cti_source()
+g_cti = importlib.import_module('mitre')
+g_cti_src = g_cti.setup_cti_source()
+g_groups = g_cti.get_groups(g_cti_src)
 
 app = Flask(__name__)
 app.debug = True
@@ -17,7 +18,6 @@ config = {'displayModeBar': False}
 
 @app.route('/plot')
 def plot():
-
     is_grouped = False
     
     if request.method == 'GET':
@@ -33,12 +33,12 @@ def plot():
     G = nx.random_geometric_graph(50, 0.125)
     G = nx.Graph()
 
-    groups = cti.get_groups(cti_src)
+
     G.add_node("A", name="T1105", category="technique")
         
     i = 1
-    print('## groups count ' + str(len(groups)))
-    for g in groups:
+    print('## groups count ' + str(len(g_groups)))
+    for g in g_groups:
         group_name = g['object']['name']
         G.add_node(str(i), name=group_name, category='threat_group')
         G.add_edge('A', str(i))
