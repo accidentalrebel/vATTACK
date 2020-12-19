@@ -213,10 +213,10 @@ def plot():
                     xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
                     yaxis=dict(showgrid=False, zeroline=False, showticklabels=False))
                     )
-    
+
     my_plot_div = fig.to_html(full_html=False, config=config)
     
-    return render_template('plotter.html', plot_div=Markup(my_plot_div))
+    return render_template('plotter.html', plot_div=Markup(my_plot_div), can_group=can_group)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
