@@ -3,33 +3,19 @@
     <script type=text/javascript src="{{url_for('static', filename='jquery-3.5.1.min.js') }}"></script>
   </head>
   <body>
-    <a href="{{ url_for('index') }}">Reload</a>
-    <form action="{{ url_for('index') }}" method='POST'>
-      <button value="{{ grouped }}" name="group" type="submit">
-      {% if grouped %}
-      Ungroup
-      {% else %}
-      Group
-      {% endif %}
-      </button>
-    </form>
-
     <script>
       $(document).ready( function() {
-	  console.log("## rheredy")
-          $('#next').click(function() {
-	      console.log("## here")
-              $.ajax("{{ url_for('test') }}").done(function (reply) {
-		  console.log("## there")
+          $('#plot').click(function() {
+              $.ajax("{{ url_for('plot') }}").done(function (reply) {
 		  $('#container').html(reply);
               });
           });
       });
     </script>
     
-    <input type="button" id="next" value="Next" />
+    <input type="button" id="plot" value="Plot" />
     <div id="container"></div>
     
-    {{ div_placeholder }}
+    <!-- {{ div_placeholder }} -->
   </body>
 </html>

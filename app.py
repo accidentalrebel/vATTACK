@@ -15,12 +15,8 @@ app.debug = True
 
 config = {'displayModeBar': False}
 
-@app.route('/test')
-def test():
-    return 'test route'
-
-@app.route('/', methods=['GET', 'POST'])
-def index():
+@app.route('/plot')
+def plot():
     # technqiue_id = cti.get_groups(cti_src)
     # return 'true' + str(technqiue_id)
     # sys.exit()
@@ -215,4 +211,9 @@ def index():
                     )
     
     my_plot_div = fig.to_html(full_html=False, config=config)
-    return render_template('index.html', div_placeholder=Markup(my_plot_div), grouped=can_group)
+    
+    return my_plot_div
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    return render_template('index.html')
