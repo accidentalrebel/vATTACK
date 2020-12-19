@@ -144,7 +144,7 @@ def plot():
         hovertext=categories,
         text=names,
         textfont=dict(
-            size=16,
+            size=10,
             color='#000000'
             ),
         textposition='top center',
@@ -157,7 +157,7 @@ def plot():
             colorscale='YlGnBu',
             reversescale=True,
             color=colors,
-            size=40,
+            size=20,
             colorbar=dict(
                 thickness=15,
                 title='Node Connections',
