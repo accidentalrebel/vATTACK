@@ -131,13 +131,13 @@ def get_groups(cti_src):
 
     groups = get_groups_using_technique(cti_src, technique_id)
 
-    for g in groups:
-        print('>>')
-        print(str(g['object']['name']))
-        print(str(g['relationship']['source_ref'] + ' ' + g['relationship']['relationship_type']) + ' ' + g['relationship']['target_ref'])
-        print('\n')
+    # for g in groups:
+    #     print('>>')
+    #     print(str(g['object']['name']))
+    #     print(str(g['relationship']['source_ref'] + ' ' + g['relationship']['relationship_type']) + ' ' + g['relationship']['target_ref'])
+    #     print('\n')
 
-    return technique_id
+    return groups
 
 if __name__ == "__main__":
     cti_src = setup_cti_source()

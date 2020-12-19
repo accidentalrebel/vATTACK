@@ -17,6 +17,7 @@ config = {'displayModeBar': False}
 
 @app.route('/plot')
 def plot():
+
     is_grouped = False
     
     if request.method == 'GET':
@@ -32,34 +33,32 @@ def plot():
     G = nx.random_geometric_graph(50, 0.125)
     G = nx.Graph()
 
+    groups = cti.get_groups(cti_src)
     G.add_node("A", name="T1105", category="technique")
-    G.add_node("B", name="APT-C-36", category='threat_group')
-    G.add_node("C", name="APT18", category='threat_group')
-    G.add_node("D", name="APT28 ", category='threat_group')
-    G.add_node("E", name="Network Intrusion Prevention", category='prevention')
-    G.add_node("F", name="Auditcred", category='malware')
-    G.add_node("G", name="BadPatch", category='malware')
-    G.add_node("H", name="T1105", category="technique")
-    G.add_node("I", name="APT-C-36", category='threat_group')
-    G.add_node("J", name="APT18", category='threat_group')
-    G.add_node("K", name="APT28 ", category='threat_group')
-    G.add_node("L", name="Network Intrusion Prevention", category='prevention')
-    G.add_node("M", name="Auditcred", category='malware')
-    G.add_node("N", name="BadPatch", category='malware')
-    G.add_node("XA", name="T1105", category="technique")
-    G.add_node("XB", name="APT-C-36", category='threat_group')
-    G.add_node("XC", name="APT18", category='threat_group')
-    G.add_node("XD", name="APT28 ", category='threat_group')
-    G.add_node("XE", name="Network Intrusion Prevention", category='prevention')
-    G.add_node("XF", name="Auditcred", category='malware')
-    G.add_node("XG", name="BadPatch", category='malware')
-    G.add_node("XH", name="T1105", category="technique")
-    G.add_node("XI", name="APT-C-36", category='threat_group')
-    G.add_node("XJ", name="APT18", category='threat_group')
-    G.add_node("XK", name="APT28 ", category='threat_group')
-    G.add_node("XL", name="Network Intrusion Prevention", category='prevention')
-    G.add_node("XM", name="Auditcred", category='malware')
-    G.add_node("XN", name="BadPatch", category='malware')
+        
+    i = 1
+    print('## groups count ' + str(len(groups)))
+    for g in groups:
+        group_name = g['object']['name']
+        G.add_node(str(i), name=group_name, category='threat_group')
+        G.add_edge('A', str(i))
+        i+=1
+
+    G.add_node("B", name="Network Intrusion Prevention", category='prevention')
+    G.add_node("C", name="Auditcred", category='malware')
+    G.add_node("D", name="BadPatch", category='malware')
+    G.add_node("E", name="T1105", category="technique")
+    G.add_node("F", name="Network Intrusion Prevention", category='prevention')
+    G.add_node("G", name="Auditcred", category='malware')
+    G.add_node("H", name="BadPatch", category='malware')
+    G.add_node("I", name="T1105", category="technique")
+    G.add_node("J", name="Network Intrusion Prevention", category='prevention')
+    G.add_node("K", name="Auditcred", category='malware')
+    G.add_node("L", name="BadPatch", category='malware')
+    G.add_node("M", name="T1105", category="technique")
+    G.add_node("N", name="Network Intrusion Prevention", category='prevention')
+    G.add_node("O", name="Auditcred", category='malware')
+    G.add_node("P", name="BadPatch", category='malware')
 
     G.add_edge('A', 'B')
     G.add_edge('A', 'C')
@@ -74,23 +73,8 @@ def plot():
     G.add_edge('A', 'L')
     G.add_edge('A', 'M')
     G.add_edge('A', 'N')
-    G.add_edge('A', 'XA')
-    G.add_edge('A', 'XB')
-    G.add_edge('A', 'XC')
-    G.add_edge('A', 'XD')
-    G.add_edge('A', 'XE')
-    G.add_edge('A', 'XF')
-    G.add_edge('A', 'XG')
-    G.add_edge('A', 'XH')
-    G.add_edge('A', 'XI')
-    G.add_edge('A', 'XJ')
-    G.add_edge('A', 'XK')
-    G.add_edge('A', 'XL')
-    G.add_edge('A', 'XM')
-    G.add_edge('A', 'XN')
-    G.add_edge('C', 'D')
-    # G.add_edge('B', 'D')
-    # G.add_edge('C', 'D')
+    G.add_edge('A', 'O')
+    G.add_edge('A', 'P')
 
     fixed_pos = {'A':(0,0)}
     pos = nx.spring_layout(G, pos=fixed_pos, fixed=['A']) #, 'B'])
