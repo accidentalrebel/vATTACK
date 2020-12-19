@@ -12,11 +12,7 @@ g_cti_src = g_cti.setup_cti_source()
 g_technique_id = g_cti.get_technique_id(g_cti_src, 'System Information Discovery')
 g_groups = g_cti.get_groups_using_technique(g_cti_src, g_technique_id)
 g_mitigations = g_cti.get_mitigations_for_technique(g_cti_src, g_technique_id)
-print('Mitigations count: ' + str(len(g_mitigations)))
-print(str(g_mitigations[0]))
 g_malwares = g_cti.get_malware_for_technique(g_cti_src, g_technique_id)
-print('Malwares count: ' + str(len(g_malwares)))
-print(str(g_malwares[0]))
 
 app = Flask(__name__)
 app.debug = True
@@ -57,29 +53,19 @@ def plot():
         G.add_edge('A', str(i))
         i+=1
 
-    G.add_node("C", name="Auditcred", category='malware')
-    G.add_node("D", name="BadPatch", category='malware')
-    G.add_node("E", name="T1105", category="technique")
-    G.add_node("G", name="Auditcred", category='malware')
-    G.add_node("H", name="BadPatch", category='malware')
-    G.add_node("I", name="T1105", category="technique")
-    G.add_node("K", name="Auditcred", category='malware')
-    G.add_node("L", name="BadPatch", category='malware')
-    G.add_node("M", name="T1105", category="technique")
-    G.add_node("O", name="Auditcred", category='malware')
-    G.add_node("P", name="BadPatch", category='malware')
+    for m in g_malwares:
+        malware_name = m['object']['name']
+        G.add_node(str(i), name=malware_name, category='malware')
+        G.add_edge('A', str(i))
+        i+=1
 
-    G.add_edge('A', 'C')
-    G.add_edge('A', 'D')
+    G.add_node("E", name="T1105", category="technique")
+    G.add_node("I", name="T1105", category="technique")
+    G.add_node("M", name="T1105", category="technique")
+
     G.add_edge('A', 'E')
-    G.add_edge('A', 'G')
-    G.add_edge('A', 'H')
     G.add_edge('A', 'I')
-    G.add_edge('A', 'K')
-    G.add_edge('A', 'L')
     G.add_edge('A', 'M')
-    G.add_edge('A', 'O')
-    G.add_edge('A', 'P')
 
     fixed_pos = {'A':(0,0)}
     pos = nx.spring_layout(G, pos=fixed_pos, fixed=['A']) #, 'B'])
