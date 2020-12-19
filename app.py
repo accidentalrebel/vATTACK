@@ -8,18 +8,22 @@ import json
 import sys
 
 cti = importlib.import_module('taxii')
+cti_src = cti.setup_cti_source()
 
 app = Flask(__name__)
 app.debug = True
 
 config = {'displayModeBar': False}
 
+@app.route('/test')
+def test():
+    return 'test route'
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    cti_src = cti.setup_cti_source()
-    technqiue_id = cti.get_groups(cti_src)
-    return 'true' + str(technqiue_id)
-    sys.exit()
+    # technqiue_id = cti.get_groups(cti_src)
+    # return 'true' + str(technqiue_id)
+    # sys.exit()
     can_group = False
     
     if request.method == 'POST':
