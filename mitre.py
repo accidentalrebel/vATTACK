@@ -87,11 +87,9 @@ def get_related(src, src_type, rel_type, target_type, reverse=False):
     return output
 
 def groups_using_software(src):
-    """returns software_id => {group, relationship} for each group using the software."""
     return get_related(src, 'intrusion-set', 'uses', 'tool', reverse=True) | get_related(src, 'intrusion-set', 'uses', 'malware', reverse=True)
 
 def get_groups_using_any_technique(src):
-    """returns technique_id => {group, relationship} for each group using the technique."""
     return get_related(src, 'intrusion-set', 'uses', 'attack-pattern', reverse=True)
 
 def get_groups_using_technique(src, technique_id):
@@ -99,12 +97,18 @@ def get_groups_using_technique(src, technique_id):
     return all_groups[technique_id]
 
 def get_mitigations_for_any_technique(src):
-    """return mitigation_id => {technique, relationship} for each technique mitigated by the mitigation."""
     return get_related(src, "course-of-action", "mitigates", "attack-pattern", reverse=True)
 
 def get_mitigations_for_technique(src, technique_id):
     all_mitigations = get_mitigations_for_any_technique(src)
     return all_mitigations[technique_id]
+
+def get_malware_for_any_technique(src):
+    return get_related(src, "malware", "uses", "attack-pattern", reverse=True)
+
+def get_malware_for_technique(src, technique_id):
+    all_malware = get_malware_for_any_technique(src)
+    return all_malware[technique_id]
 
 def setup_cti_source():
     print('>> here')

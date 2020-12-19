@@ -14,6 +14,9 @@ g_groups = g_cti.get_groups_using_technique(g_cti_src, g_technique_id)
 g_mitigations = g_cti.get_mitigations_for_technique(g_cti_src, g_technique_id)
 print('Mitigations count: ' + str(len(g_mitigations)))
 print(str(g_mitigations[0]))
+g_malwares = g_cti.get_malware_for_technique(g_cti_src, g_technique_id)
+print('Malwares count: ' + str(len(g_malwares)))
+print(str(g_malwares[0]))
 
 app = Flask(__name__)
 app.debug = True
