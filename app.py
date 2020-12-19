@@ -9,7 +9,8 @@ import sys
 
 g_cti = importlib.import_module('mitre')
 g_cti_src = g_cti.setup_cti_source()
-g_groups = g_cti.get_groups(g_cti_src)
+g_technique_id = g_cti.get_technique_id(g_cti_src, 'System Information Discovery')
+g_groups = g_cti.get_groups_using_technique(g_cti_src, g_technique_id)
 
 app = Flask(__name__)
 app.debug = True

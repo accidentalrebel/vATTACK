@@ -11,7 +11,7 @@ def get_technique_by_name(src, name):
     return src.query(filt)
 
 def get_related(src, src_type, rel_type, target_type, reverse=False):
-    """build relationship mappings
+    """build> relationship mappings
        params:
          src: MemoryStore to build relationship lookups for
          src_type: source type for the relationships, e.g "attack-pattern"
@@ -121,23 +121,10 @@ def setup_cti_source():
 
     return cti_src
 
-def get_groups(cti_src):        
-    print('Getting technique by name')
+def get_technique_id(cti_src, technique):
     technique = get_technique_by_name(cti_src, 'System Information Discovery')
-    print(str(technique))
-
     technique_id = technique[0]['id']
-    print('technique_id is ' + technique_id)
-
-    groups = get_groups_using_technique(cti_src, technique_id)
-
-    # for g in groups:
-    #     print('>>')
-    #     print(str(g['object']['name']))
-    #     print(str(g['relationship']['source_ref'] + ' ' + g['relationship']['relationship_type']) + ' ' + g['relationship']['target_ref'])
-    #     print('\n')
-
-    return groups
+    return technique_id
 
 if __name__ == "__main__":
     cti_src = setup_cti_source()
