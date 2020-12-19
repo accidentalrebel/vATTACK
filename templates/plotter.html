@@ -1,19 +1,6 @@
+{% include "vattack.js" %}
 <script>
-  $('#group').click(function() {
-      var can_group = false;
-      if ( "{{ is_grouped }}" == "False" )
-      {
-	  can_group = true;
-      }
-      $.ajax({
-	  url: "{{ url_for('plot') }}",
-	  data: {
-	      can_group: can_group
-	  }
-      }).done(function (reply) {
-	  $('#container').html(reply);
-      });
-  });
+  $('#group').click(show_plot);
 </script>
 
 <input type="button" id="group" value=

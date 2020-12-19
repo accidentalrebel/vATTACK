@@ -3,19 +3,11 @@
     <script type=text/javascript src="{{url_for('static', filename='jquery-3.5.1.js') }}"></script>
   </head>
   <body>
+    {% include "vattack.js" %}
     <script>
-      $(document).ready( function() {
-          $('#plot').click(function() {
-              $.ajax({
-		  url: "{{ url_for('plot') }}",
-		  data: {
-		      can_group: false
-		  }
-	      }).done(function (reply) {
-		  $('#container').html(reply);
-              });
-          });
-      });
+    $(document).ready( function() {
+	$('#plot').click(show_plot);
+    });
     </script>
     
     <input type="button" id="plot" value="Plot" />

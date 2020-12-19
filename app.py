@@ -17,7 +17,6 @@ config = {'displayModeBar': False}
 
 @app.route('/plot')
 def plot():
-
     is_grouped = False
     
     if request.method == 'GET':
