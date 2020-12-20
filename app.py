@@ -9,7 +9,7 @@ import sys
 
 g_cti = importlib.import_module('mitre')
 g_cti_src = g_cti.setup_cti_source()
-g_technique_name = 'Ingress Tool Transfer' #Access Token Manipulation'
+g_technique_name = 'Access Token Manipulation'
 g_technique = g_cti.get_technique_by_name(g_cti_src, g_technique_name)
 g_technique_id = g_cti.get_technique_id(g_cti_src, g_technique)
 g_subs = g_cti.get_subtechnique_for_technique(g_cti_src, g_technique_id);
@@ -147,7 +147,7 @@ def plot():
 
         if node == 'main':
             colors.append('#ffffff')
-        if cat == 'threat_group':
+        elif cat == 'threat_group':
             colors.append('#ff0000')
         elif cat == 'prevention':
             colors.append('#d9ff00')
