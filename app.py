@@ -9,10 +9,14 @@ import sys
 
 g_cti = importlib.import_module('mitre')
 g_cti_src = g_cti.setup_cti_source()
-g_technique_id = g_cti.get_technique_id(g_cti_src, 'System Information Discovery')
+g_technique_id = g_cti.get_technique_id(g_cti_src, 'Access Token Manipulation')
+g_subs = g_cti.get_subtechnique_for_technique(g_cti_src, g_technique_id);
 g_groups = g_cti.get_groups_using_technique(g_cti_src, g_technique_id)
 g_mitigations = g_cti.get_mitigations_for_technique(g_cti_src, g_technique_id)
 g_malwares = g_cti.get_malware_for_technique(g_cti_src, g_technique_id)
+g_tools = g_cti.get_tool_for_technique(g_cti_src, g_technique_id)
+
+print('[INFO] Done setting up source.')
 
 app = Flask(__name__)
 app.debug = True
@@ -40,32 +44,40 @@ def plot():
     G.add_node("A", name="T1105", category="technique")
         
     i = 1
-    print('## groups count ' + str(len(g_groups)))
-    for g in g_groups:
-        group_name = g['object']['name']
-        G.add_node(str(i), name=group_name, category='threat_group')
-        G.add_edge('A', str(i))
-        i+=1
+    if g_groups:
+        for g in g_groups:
+            group_name = g['object']['name']
+            G.add_node(str(i), name=group_name, category='threat_group')
+            G.add_edge('A', str(i))
+            i+=1
 
-    for m in g_mitigations:
-        mitigation_name = m['object']['name']
-        G.add_node(str(i), name=mitigation_name, category='prevention')
-        G.add_edge('A', str(i))
-        i+=1
+    if g_mitigations:
+        for m in g_mitigations:
+            mitigation_name = m['object']['name']
+            G.add_node(str(i), name=mitigation_name, category='prevention')
+            G.add_edge('A', str(i))
+            i+=1
 
-    for m in g_malwares:
-        malware_name = m['object']['name']
-        G.add_node(str(i), name=malware_name, category='malware')
-        G.add_edge('A', str(i))
-        i+=1
+    if g_malwares:
+        for m in g_malwares:
+            malware_name = m['object']['name']
+            G.add_node(str(i), name=malware_name, category='malware')
+            G.add_edge('A', str(i))
+            i+=1
 
-    G.add_node("E", name="T1105", category="technique")
-    G.add_node("I", name="T1105", category="technique")
-    G.add_node("M", name="T1105", category="technique")
+    if g_tools:
+        for t in g_tools:
+            tool_name = t['object']['name']
+            G.add_node(str(i), name=tool_name, category='tool')
+            G.add_edge('A', str(i))
+            i+=1
 
-    G.add_edge('A', 'E')
-    G.add_edge('A', 'I')
-    G.add_edge('A', 'M')
+    if g_subs:
+        for s in g_subs:
+            sub_name = s['object']['name']
+            G.add_node(str(i), name=sub_name, category='technique')
+            G.add_edge('A', str(i))
+            i+=1
 
     fixed_pos = {'A':(0,0)}
     pos = nx.spring_layout(G, pos=fixed_pos, fixed=['A']) #, 'B'])
@@ -83,9 +95,12 @@ def plot():
             elif cat == 'malware':
                 pos[node][0] -= 1
                 pos[node][1] += 1
-            elif cat == 'prevention':
+            elif cat == 'tool':
                 pos[node][0] -= 1
                 pos[node][1] -= 1
+            elif cat == 'prevention':
+                pos[node][0] -= 0
+                pos[node][1] += 1
             elif cat == 'technique' and node != 'A':
                 pos[node][0] += 1
                 pos[node][1] -= 1
@@ -134,6 +149,8 @@ def plot():
             colors.append('#d9ff00')
         elif cat == 'malware':
             colors.append('#ff8800')
+        elif cat == 'tool':
+            colors.append('#0352fc')            
         else:
             colors.append('#ff00ff')
 

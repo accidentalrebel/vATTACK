@@ -1,5 +1,6 @@
 from taxii2client.v20 import Server, Collection
 from stix2 import Filter, TAXIICollectionSource, FileSystemSource
+import sys
 
 IS_ONLINE = False
 
@@ -94,24 +95,47 @@ def get_groups_using_any_technique(src):
 
 def get_groups_using_technique(src, technique_id):
     all_groups = get_groups_using_any_technique(src)
-    return all_groups[technique_id]
+    if technique_id in all_groups:
+        return all_groups[technique_id]
+    return None
 
 def get_mitigations_for_any_technique(src):
     return get_related(src, "course-of-action", "mitigates", "attack-pattern", reverse=True)
 
 def get_mitigations_for_technique(src, technique_id):
     all_mitigations = get_mitigations_for_any_technique(src)
-    return all_mitigations[technique_id]
+    if technique_id in all_mitigations:
+        return all_mitigations[technique_id]
+    return None
 
 def get_malware_for_any_technique(src):
     return get_related(src, "malware", "uses", "attack-pattern", reverse=True)
 
 def get_malware_for_technique(src, technique_id):
     all_malware = get_malware_for_any_technique(src)
-    return all_malware[technique_id]
+    if technique_id in all_malware:
+        return all_malware[technique_id]
+    return None
+
+def get_tool_for_any_technique(src):
+    return get_related(src, "tool", "uses", "attack-pattern", reverse=True)
+
+def get_tool_for_technique(src, technique_id):
+    all_tool = get_tool_for_any_technique(src)
+    if technique_id in all_tool:
+        return all_tool[technique_id]
+    return None
+
+def get_all_subtechniques(src):
+    return get_related(src, "attack-pattern", "subtechnique-of", "attack-pattern", reverse=True)
+
+def get_subtechnique_for_technique(src, technique_id):
+    all_subs = get_all_subtechniques(src)
+    if technique_id in all_subs:
+        return all_subs[technique_id]
+    return None
 
 def setup_cti_source():
-    print('>> here')
     if IS_ONLINE:
         collections = {
             'enterprise_attack': '95ecc380-afe9-11e4-9b6c-751b66dd541e',
@@ -126,15 +150,13 @@ def setup_cti_source():
         collection = Collection(f'https://cti-taxii.mitre.org/stix/collections/{collections["enterprise_attack"]}/')
         print('Collection received.')
         cti_src = TAXIICollectionSource(collection)
-        print('>> there')
     else:
         cti_src = FileSystemSource('./cti/enterprise-attack')
-        print('>> everywhere ' + str(cti_src))
 
     return cti_src
 
-def get_technique_id(cti_src, technique):
-    technique = get_technique_by_name(cti_src, 'System Information Discovery')
+def get_technique_id(cti_src, technique_name):
+    technique = get_technique_by_name(cti_src, technique_name)
     technique_id = technique[0]['id']
     return technique_id
 
