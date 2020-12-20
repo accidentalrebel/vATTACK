@@ -11,6 +11,14 @@ def get_technique_by_name(src, name):
     ]
     return src.query(filt)
 
+def get_technique_id(cti_src, technique):
+    technique_id = technique[0]['id']
+    return technique_id
+
+def get_technique_name(cti_src, technique):
+    technique_name = technique[0]['name']
+    return technique_name
+
 def get_related(src, src_type, rel_type, target_type, reverse=False):
     """build> relationship mappings
        params:
@@ -154,11 +162,6 @@ def setup_cti_source():
         cti_src = FileSystemSource('./cti/enterprise-attack')
 
     return cti_src
-
-def get_technique_id(cti_src, technique_name):
-    technique = get_technique_by_name(cti_src, technique_name)
-    technique_id = technique[0]['id']
-    return technique_id
 
 if __name__ == "__main__":
     cti_src = setup_cti_source()

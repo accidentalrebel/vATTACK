@@ -9,7 +9,9 @@ import sys
 
 g_cti = importlib.import_module('mitre')
 g_cti_src = g_cti.setup_cti_source()
-g_technique_id = g_cti.get_technique_id(g_cti_src, 'Access Token Manipulation')
+g_technique_name = 'Ingress Tool Transfer' #Access Token Manipulation'
+g_technique = g_cti.get_technique_by_name(g_cti_src, g_technique_name)
+g_technique_id = g_cti.get_technique_id(g_cti_src, g_technique)
 g_subs = g_cti.get_subtechnique_for_technique(g_cti_src, g_technique_id);
 g_groups = g_cti.get_groups_using_technique(g_cti_src, g_technique_id)
 g_mitigations = g_cti.get_mitigations_for_technique(g_cti_src, g_technique_id)
@@ -41,49 +43,49 @@ def plot():
     G = nx.Graph()
 
 
-    G.add_node("A", name="T1105", category="technique")
+    G.add_node('main', name=g_technique_name, category='technique')
         
     i = 1
     if g_groups:
         for g in g_groups:
             group_name = g['object']['name']
             G.add_node(str(i), name=group_name, category='threat_group')
-            G.add_edge('A', str(i))
+            G.add_edge('main', str(i))
             i+=1
 
     if g_mitigations:
         for m in g_mitigations:
             mitigation_name = m['object']['name']
             G.add_node(str(i), name=mitigation_name, category='prevention')
-            G.add_edge('A', str(i))
+            G.add_edge('main', str(i))
             i+=1
 
     if g_malwares:
         for m in g_malwares:
             malware_name = m['object']['name']
             G.add_node(str(i), name=malware_name, category='malware')
-            G.add_edge('A', str(i))
+            G.add_edge('main', str(i))
             i+=1
 
     if g_tools:
         for t in g_tools:
             tool_name = t['object']['name']
             G.add_node(str(i), name=tool_name, category='tool')
-            G.add_edge('A', str(i))
+            G.add_edge('main', str(i))
             i+=1
 
     if g_subs:
         for s in g_subs:
             sub_name = s['object']['name']
             G.add_node(str(i), name=sub_name, category='technique')
-            G.add_edge('A', str(i))
+            G.add_edge('main', str(i))
             i+=1
 
-    fixed_pos = {'A':(0,0)}
-    pos = nx.spring_layout(G, pos=fixed_pos, fixed=['A']) #, 'B'])
+    fixed_pos = {'main':(0,0)}
+    pos = nx.spring_layout(G, pos=fixed_pos, fixed=['main'])
 
-    node_names = nx.get_node_attributes(G, "name")
-    node_categories = nx.get_node_attributes(G, "category")
+    node_names = nx.get_node_attributes(G, 'name')
+    node_categories = nx.get_node_attributes(G, 'category')
     
     if is_grouped:
         # Adjust positions for grouping
@@ -101,7 +103,7 @@ def plot():
             elif cat == 'prevention':
                 pos[node][0] -= 0
                 pos[node][1] += 1
-            elif cat == 'technique' and node != 'A':
+            elif cat == 'technique' and node != 'main':
                 pos[node][0] += 1
                 pos[node][1] -= 1
 
@@ -143,6 +145,8 @@ def plot():
         cat = node_categories[node]
         categories.append(cat)
 
+        if node == 'main':
+            colors.append('#ffffff')
         if cat == 'threat_group':
             colors.append('#ff0000')
         elif cat == 'prevention':
@@ -192,9 +196,9 @@ def plot():
                     hovermode='closest',
                     margin=dict(b=20,l=5,r=5,t=40),
                     annotations=[ dict(
-                        text="VAtt&ck - Visual Att&ck",
+                        text='VAtt&ck - Visual Att&ck',
                         showarrow=False,
-                        xref="paper", yref="paper",
+                        xref='paper', yref='paper',
                         x=0.005, y=-0.002 ) ],
                     xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
                     yaxis=dict(showgrid=False, zeroline=False, showticklabels=False))
