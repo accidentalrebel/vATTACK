@@ -9,6 +9,15 @@ import sys
 
 print('[INFO] Starting...')
 
+g_technique_id = ''
+g_technique_name = ''
+g_technique = None
+g_subs = None
+g_groups = None
+g_mitigations = None
+g_malwares = None
+g_tools = None
+
 g_cti = importlib.import_module('mitre')
 g_cti_src = g_cti.setup_cti_source()
 print('[INFO] Finished setting up cti source.')
@@ -20,7 +29,17 @@ config = {'displayModeBar': False}
 
 @app.route('/plot')
 def plot():
+    global g_technique_id
+    global g_technique_name
+    global g_technique
+    global g_subs
+    global g_groups
+    global g_mitigations
+    global g_malwares
+    global g_tools
+    
     is_grouped = False
+    can_group = False
     
     if request.method == 'GET':
         can_group = request.args.get('can_group')
@@ -33,32 +52,32 @@ def plot():
 
     print('search_text: ' + search_text)
 
-
     #g_technique_name = 'Access Token Manipulation'
-    external_id = search_text
-    print('[INFO] Fetching technique by id ' + external_id + '...')
-    g_technique = g_cti.get_technique_by_external_id(g_cti_src, external_id)
-    if not g_technique:
-        g_technique_name = search_text
-        print('[INFO] Fetching technique by name ' + g_technique_name + '...')
+    if g_technique_id == '':
+        external_id = search_text
+        print('[INFO] Fetching technique by id ' + external_id + '...')
+        g_technique = g_cti.get_technique_by_external_id(g_cti_src, external_id)
+        if not g_technique:
+            g_technique_name = search_text
+            print('[INFO] Fetching technique by name ' + g_technique_name + '...')
 
-        g_technique = g_cti.get_technique_by_name(g_cti_src, g_technique_name)
-    else:
-        g_technique_name = g_cti.get_technique_name(g_cti_src, g_technique)
-        
-    g_technique_id = g_cti.get_technique_id(g_cti_src, g_technique)
-    print('[INFO] Finished fetching technique: ' + g_technique_name)
+            g_technique = g_cti.get_technique_by_name(g_cti_src, g_technique_name)
+        else:
+            g_technique_name = g_cti.get_technique_name(g_cti_src, g_technique)
 
-    g_subs = g_cti.get_subtechnique_for_technique(g_cti_src, g_technique_id);
-    print('[INFO] Finished fetching subtechniques.')
-    g_groups = g_cti.get_groups_using_technique(g_cti_src, g_technique_id)
-    print('[INFO] Finished fetching groups.')
-    g_mitigations = g_cti.get_mitigations_for_technique(g_cti_src, g_technique_id)
-    print('[INFO] Finished fetching mitigations.')
-    g_malwares = g_cti.get_malware_for_technique(g_cti_src, g_technique_id)
-    print('[INFO] Finished fetching malwares.')
-    g_tools = g_cti.get_tool_for_technique(g_cti_src, g_technique_id)
-    print('[INFO] Finished fetching tools.')
+        g_technique_id = g_cti.get_technique_id(g_cti_src, g_technique)
+        print('[INFO] Finished fetching technique: ' + g_technique_name)
+
+        g_subs = g_cti.get_subtechnique_for_technique(g_cti_src, g_technique_id);
+        print('[INFO] Finished fetching subtechniques.')
+        g_groups = g_cti.get_groups_using_technique(g_cti_src, g_technique_id)
+        print('[INFO] Finished fetching groups.')
+        g_mitigations = g_cti.get_mitigations_for_technique(g_cti_src, g_technique_id)
+        print('[INFO] Finished fetching mitigations.')
+        g_malwares = g_cti.get_malware_for_technique(g_cti_src, g_technique_id)
+        print('[INFO] Finished fetching malwares.')
+        g_tools = g_cti.get_tool_for_technique(g_cti_src, g_technique_id)
+        print('[INFO] Finished fetching tools.')
 
     points, state = Points(), InputDeviceState()
 
