@@ -74,16 +74,16 @@ def plot():
         g_technique_id = g_cti.get_technique_id(g_cti_src, g_technique)
         print('[INFO] Finished fetching technique: ' + g_technique_name)
 
-        # g_subs = g_cti.get_subtechnique_for_technique(g_cti_src, g_technique_id);
-        # print('[INFO] Finished fetching subtechniques.')
-        # g_groups = g_cti.get_groups_using_technique(g_cti_src, g_technique_id)
-        # print('[INFO] Finished fetching groups.')
-        # g_mitigations = g_cti.get_mitigations_for_technique(g_cti_src, g_technique_id)
-        # print('[INFO] Finished fetching mitigations.')
-        # g_malwares = g_cti.get_malware_for_technique(g_cti_src, g_technique_id)
-        # print('[INFO] Finished fetching malwares.')
-        # g_tools = g_cti.get_tool_for_technique(g_cti_src, g_technique_id)
-        # print('[INFO] Finished fetching tools.')
+        g_subs = g_cti.get_subtechnique_for_technique(g_cti_src, g_technique_id);
+        print('[INFO] Finished fetching subtechniques.')
+        g_groups = g_cti.get_groups_using_technique(g_cti_src, g_technique_id)
+        print('[INFO] Finished fetching groups.')
+        g_mitigations = g_cti.get_mitigations_for_technique(g_cti_src, g_technique_id)
+        print('[INFO] Finished fetching mitigations.')
+        g_malwares = g_cti.get_malware_for_technique(g_cti_src, g_technique_id)
+        print('[INFO] Finished fetching malwares.')
+        g_tools = g_cti.get_tool_for_technique(g_cti_src, g_technique_id)
+        print('[INFO] Finished fetching tools.')
 
     points, state = Points(), InputDeviceState()
 
@@ -91,16 +91,7 @@ def plot():
     G = nx.Graph()
 
     desc = g_technique[0].description
-    desc = desc.replace('. ', '. <br />')
-    # desc = desc.replace('\n\n', '<br />')
-    # desc = re.sub("(.{10})", "\\1\n", desc, 0, re.DOTALL)
-    wrapper = textwrap.TextWrapper(width=120)
-    desc_list = wrapper.wrap(text=desc)
-    desc = ''
-    for d in desc_list:
-        desc = desc + d + '<br />'
-
-    print(desc)
+    desc = wrap_description(desc)
     
     G.add_node('main', name=g_technique_name, category='technique', details=desc)
         
@@ -108,35 +99,40 @@ def plot():
     if g_groups:
         for g in g_groups:
             group_name = g['object']['name']
-            G.add_node(str(i), name=group_name, category='threat_group', details='None')
+            desc = wrap_description(g['object']['description'])
+            G.add_node(str(i), name=group_name, category='threat_group', details=desc)
             G.add_edge('main', str(i))
             i+=1
 
     if g_mitigations:
         for m in g_mitigations:
             mitigation_name = m['object']['name']
-            G.add_node(str(i), name=mitigation_name, category='prevention', details='None')
+            desc = wrap_description(m['object']['description'])
+            G.add_node(str(i), name=mitigation_name, category='prevention', details=desc)
             G.add_edge('main', str(i))
             i+=1
 
     if g_malwares:
         for m in g_malwares:
             malware_name = m['object']['name']
-            G.add_node(str(i), name=malware_name, category='malware', details='None')
+            desc = wrap_description(m['object']['description'])
+            G.add_node(str(i), name=malware_name, category='malware', details=desc)
             G.add_edge('main', str(i))
             i+=1
 
     if g_tools:
         for t in g_tools:
             tool_name = t['object']['name']
-            G.add_node(str(i), name=tool_name, category='tool', details='None')
+            desc = wrap_description(t['object']['description'])
+            G.add_node(str(i), name=tool_name, category='tool', details=desc)
             G.add_edge('main', str(i))
             i+=1
 
     if g_subs:
         for s in g_subs:
             sub_name = s['object']['name']
-            G.add_node(str(i), name=sub_name, category='technique', details='None')
+            desc = wrap_description(s['object']['description'])
+            G.add_node(str(i), name=sub_name, category='technique', details=desc)
             G.add_edge('main', str(i))
             i+=1
 
@@ -278,3 +274,16 @@ def plot():
 @app.route('/', methods=['GET', 'POST'])
 def index():
     return render_template('index.html')
+
+def wrap_description(desc):
+    splitted = desc.split('\n\n')
+    wrapper = textwrap.TextWrapper(width=120)
+
+    desc = ''
+    for s in splitted:
+        desc_list = wrapper.wrap(text=s)
+        for d in desc_list:
+            desc = desc + d + '<br />'
+        desc = desc + '<br />'
+
+    return desc
