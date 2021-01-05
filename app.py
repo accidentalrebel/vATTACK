@@ -74,16 +74,16 @@ def plot():
         g_technique_id = g_cti.get_technique_id(g_cti_src, g_technique)
         print('[INFO] Finished fetching technique: ' + g_technique_name)
 
-        g_subs = g_cti.get_subtechnique_for_technique(g_cti_src, g_technique_id);
-        print('[INFO] Finished fetching subtechniques.')
-        g_groups = g_cti.get_groups_using_technique(g_cti_src, g_technique_id)
-        print('[INFO] Finished fetching groups.')
-        g_mitigations = g_cti.get_mitigations_for_technique(g_cti_src, g_technique_id)
-        print('[INFO] Finished fetching mitigations.')
-        g_malwares = g_cti.get_malware_for_technique(g_cti_src, g_technique_id)
-        print('[INFO] Finished fetching malwares.')
-        g_tools = g_cti.get_tool_for_technique(g_cti_src, g_technique_id)
-        print('[INFO] Finished fetching tools.')
+        # g_subs = g_cti.get_subtechnique_for_technique(g_cti_src, g_technique_id);
+        # print('[INFO] Finished fetching subtechniques.')
+        # g_groups = g_cti.get_groups_using_technique(g_cti_src, g_technique_id)
+        # print('[INFO] Finished fetching groups.')
+        # g_mitigations = g_cti.get_mitigations_for_technique(g_cti_src, g_technique_id)
+        # print('[INFO] Finished fetching mitigations.')
+        # g_malwares = g_cti.get_malware_for_technique(g_cti_src, g_technique_id)
+        # print('[INFO] Finished fetching malwares.')
+        # g_tools = g_cti.get_tool_for_technique(g_cti_src, g_technique_id)
+        # print('[INFO] Finished fetching tools.')
 
     points, state = Points(), InputDeviceState()
 
@@ -276,6 +276,24 @@ def index():
     return render_template('index.html')
 
 def parse_details(name, desc):
+
+    index = 0
+    last_index = 0
+    pattern = re.compile(r'\[[^\]]*?\]\([^\)]*?\)')
+    while True:
+        print('Starting at last_index: ' + str(last_index))
+        searched = pattern.search(desc, last_index)
+        if not searched:
+            print('Breaking...')
+            break
+
+        print('Markdowns: ' + str(searched))
+        print(searched.group())
+        print(searched.span())
+        last_index = searched.span()[1]
+        print(str(last_index))
+        print(type(last_index))
+    
     splitted = desc.split('\n\n')
     wrapper = textwrap.TextWrapper(width=120)
 
