@@ -11,6 +11,13 @@ def get_technique_by_name(src, name):
     ]
     return src.query(filt)
 
+def get_technique_by_external_id(src, _id):
+    filt = [
+        Filter('type', '=', 'attack-pattern'),
+        Filter("external_references.external_id", "=", _id)
+    ]
+    return src.query(filt)
+
 def get_technique_id(cti_src, technique):
     technique_id = technique[0]['id']
     return technique_id

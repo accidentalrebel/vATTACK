@@ -33,12 +33,22 @@ def plot():
 
     print('search_text: ' + search_text)
 
-    g_technique_name = search_text
+
     #g_technique_name = 'Access Token Manipulation'
-    g_technique = g_cti.get_technique_by_name(g_cti_src, g_technique_name)
-    print('[INFO] Finished fetching technique.')
+    external_id = search_text
+    print('[INFO] Fetching technique by id ' + external_id + '...')
+    g_technique = g_cti.get_technique_by_external_id(g_cti_src, external_id)
+    if not g_technique:
+        g_technique_name = search_text
+        print('[INFO] Fetching technique by name ' + g_technique_name + '...')
+
+        g_technique = g_cti.get_technique_by_name(g_cti_src, g_technique_name)
+    else:
+        g_technique_name = g_cti.get_technique_name(g_cti_src, g_technique)
+        
     g_technique_id = g_cti.get_technique_id(g_cti_src, g_technique)
-    print('[INFO] Finished fetching technique id.')
+    print('[INFO] Finished fetching technique: ' + g_technique_name)
+
     g_subs = g_cti.get_subtechnique_for_technique(g_cti_src, g_technique_id);
     print('[INFO] Finished fetching subtechniques.')
     g_groups = g_cti.get_groups_using_technique(g_cti_src, g_technique_id)
@@ -54,7 +64,6 @@ def plot():
 
     G = nx.random_geometric_graph(50, 0.125)
     G = nx.Graph()
-
 
     G.add_node('main', name=g_technique_name, category='technique')
         
