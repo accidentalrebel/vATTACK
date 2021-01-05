@@ -1,5 +1,6 @@
 from flask import Flask, render_template, Markup, request
 from plotly.callbacks import Points, InputDeviceState
+from bs4 import BeautifulSoup
 import importlib
 import plotly.graph_objects as go
 import networkx as nx
@@ -8,6 +9,7 @@ import json
 import sys
 import re
 import textwrap
+from markdown import markdown
 
 print('[INFO] Starting...')
 
@@ -277,22 +279,20 @@ def index():
 
 def parse_details(name, desc):
 
-    index = 0
-    last_index = 0
-    pattern = re.compile(r'\[[^\]]*?\]\([^\)]*?\)')
-    while True:
-        print('Starting at last_index: ' + str(last_index))
-        searched = pattern.search(desc, last_index)
-        if not searched:
-            print('Breaking...')
-            break
+    md = markdown(desc)
+    soup = BeautifulSoup(md, 'html.parser')
 
-        print('Markdowns: ' + str(searched))
-        print(searched.group())
-        print(searched.span())
-        last_index = searched.span()[1]
-        print(str(last_index))
-        print(type(last_index))
+    desc = ''
+    for p in soup.find_all('p'):
+        desc += p.get_text() + '[break]'
+    print(desc + '\n\n')
+
+    soup = BeautifulSoup(desc, 'html.parser')
+    desc = ''.join(soup.findAll(text=True))
+    print(desc + '\n\n')
+
+    desc = desc.replace('[break]', '<br /><br />')
+    print(desc)
     
     splitted = desc.split('\n\n')
     wrapper = textwrap.TextWrapper(width=120)
