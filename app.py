@@ -91,7 +91,7 @@ def plot():
     G = nx.Graph()
 
     desc = g_technique[0].description
-    desc = wrap_description(desc)
+    desc = parse_details(g_technique_name, desc)
     
     G.add_node('main', name=g_technique_name, category='technique', details=desc)
         
@@ -99,7 +99,7 @@ def plot():
     if g_groups:
         for g in g_groups:
             group_name = g['object']['name']
-            desc = wrap_description(g['object']['description'])
+            desc = parse_details(group_name, g['object']['description'])
             G.add_node(str(i), name=group_name, category='threat_group', details=desc)
             G.add_edge('main', str(i))
             i+=1
@@ -107,7 +107,7 @@ def plot():
     if g_mitigations:
         for m in g_mitigations:
             mitigation_name = m['object']['name']
-            desc = wrap_description(m['object']['description'])
+            desc = parse_details(mitigation_name, m['object']['description'])
             G.add_node(str(i), name=mitigation_name, category='prevention', details=desc)
             G.add_edge('main', str(i))
             i+=1
@@ -115,7 +115,7 @@ def plot():
     if g_malwares:
         for m in g_malwares:
             malware_name = m['object']['name']
-            desc = wrap_description(m['object']['description'])
+            desc = parse_details(malware_name, m['object']['description'])
             G.add_node(str(i), name=malware_name, category='malware', details=desc)
             G.add_edge('main', str(i))
             i+=1
@@ -123,7 +123,7 @@ def plot():
     if g_tools:
         for t in g_tools:
             tool_name = t['object']['name']
-            desc = wrap_description(t['object']['description'])
+            desc = parse_details(tool_name, t['object']['description'])
             G.add_node(str(i), name=tool_name, category='tool', details=desc)
             G.add_edge('main', str(i))
             i+=1
@@ -131,7 +131,7 @@ def plot():
     if g_subs:
         for s in g_subs:
             sub_name = s['object']['name']
-            desc = wrap_description(s['object']['description'])
+            desc = parse_details(sub_name, s['object']['description'])
             G.add_node(str(i), name=sub_name, category='technique', details=desc)
             G.add_edge('main', str(i))
             i+=1
@@ -224,7 +224,7 @@ def plot():
         hoverinfo='text',
         hovertext=details,
         hoverlabel=dict(
-            namelength=-1
+            namelength=-1,
             ),
         text=names,
         textfont=dict(
@@ -275,7 +275,7 @@ def plot():
 def index():
     return render_template('index.html')
 
-def wrap_description(desc):
+def parse_details(name, desc):
     splitted = desc.split('\n\n')
     wrapper = textwrap.TextWrapper(width=120)
 
@@ -286,4 +286,4 @@ def wrap_description(desc):
             desc = desc + d + '<br />'
         desc = desc + '<br />'
 
-    return desc
+    return '<b>' + name + '</b><br />' + desc
