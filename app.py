@@ -6,6 +6,8 @@ import networkx as nx
 import plotly.express as px
 import json
 import sys
+import re
+import textwrap
 
 print('[INFO] Starting...')
 
@@ -72,57 +74,69 @@ def plot():
         g_technique_id = g_cti.get_technique_id(g_cti_src, g_technique)
         print('[INFO] Finished fetching technique: ' + g_technique_name)
 
-        g_subs = g_cti.get_subtechnique_for_technique(g_cti_src, g_technique_id);
-        print('[INFO] Finished fetching subtechniques.')
-        g_groups = g_cti.get_groups_using_technique(g_cti_src, g_technique_id)
-        print('[INFO] Finished fetching groups.')
-        g_mitigations = g_cti.get_mitigations_for_technique(g_cti_src, g_technique_id)
-        print('[INFO] Finished fetching mitigations.')
-        g_malwares = g_cti.get_malware_for_technique(g_cti_src, g_technique_id)
-        print('[INFO] Finished fetching malwares.')
-        g_tools = g_cti.get_tool_for_technique(g_cti_src, g_technique_id)
-        print('[INFO] Finished fetching tools.')
+        # g_subs = g_cti.get_subtechnique_for_technique(g_cti_src, g_technique_id);
+        # print('[INFO] Finished fetching subtechniques.')
+        # g_groups = g_cti.get_groups_using_technique(g_cti_src, g_technique_id)
+        # print('[INFO] Finished fetching groups.')
+        # g_mitigations = g_cti.get_mitigations_for_technique(g_cti_src, g_technique_id)
+        # print('[INFO] Finished fetching mitigations.')
+        # g_malwares = g_cti.get_malware_for_technique(g_cti_src, g_technique_id)
+        # print('[INFO] Finished fetching malwares.')
+        # g_tools = g_cti.get_tool_for_technique(g_cti_src, g_technique_id)
+        # print('[INFO] Finished fetching tools.')
 
     points, state = Points(), InputDeviceState()
 
     G = nx.random_geometric_graph(50, 0.125)
     G = nx.Graph()
 
-    G.add_node('main', name=g_technique_name, category='technique')
+    desc = g_technique[0].description
+    desc = desc.replace('. ', '. <br />')
+    # desc = desc.replace('\n\n', '<br />')
+    # desc = re.sub("(.{10})", "\\1\n", desc, 0, re.DOTALL)
+    wrapper = textwrap.TextWrapper(width=120)
+    desc_list = wrapper.wrap(text=desc)
+    desc = ''
+    for d in desc_list:
+        desc = desc + d + '<br />'
+
+    print(desc)
+    
+    G.add_node('main', name=g_technique_name, category='technique', details=desc)
         
     i = 1
     if g_groups:
         for g in g_groups:
             group_name = g['object']['name']
-            G.add_node(str(i), name=group_name, category='threat_group')
+            G.add_node(str(i), name=group_name, category='threat_group', details='None')
             G.add_edge('main', str(i))
             i+=1
 
     if g_mitigations:
         for m in g_mitigations:
             mitigation_name = m['object']['name']
-            G.add_node(str(i), name=mitigation_name, category='prevention')
+            G.add_node(str(i), name=mitigation_name, category='prevention', details='None')
             G.add_edge('main', str(i))
             i+=1
 
     if g_malwares:
         for m in g_malwares:
             malware_name = m['object']['name']
-            G.add_node(str(i), name=malware_name, category='malware')
+            G.add_node(str(i), name=malware_name, category='malware', details='None')
             G.add_edge('main', str(i))
             i+=1
 
     if g_tools:
         for t in g_tools:
             tool_name = t['object']['name']
-            G.add_node(str(i), name=tool_name, category='tool')
+            G.add_node(str(i), name=tool_name, category='tool', details='None')
             G.add_edge('main', str(i))
             i+=1
 
     if g_subs:
         for s in g_subs:
             sub_name = s['object']['name']
-            G.add_node(str(i), name=sub_name, category='technique')
+            G.add_node(str(i), name=sub_name, category='technique', details='None')
             G.add_edge('main', str(i))
             i+=1
 
@@ -131,6 +145,7 @@ def plot():
 
     node_names = nx.get_node_attributes(G, 'name')
     node_categories = nx.get_node_attributes(G, 'category')
+    node_details = nx.get_node_attributes(G, 'details')
     
     if is_grouped:
         # Adjust positions for grouping
@@ -179,6 +194,7 @@ def plot():
     names = []
     colors = []
     categories = []
+    details = []
 
     for node in G.nodes:
         names.append(node_names[node])
@@ -189,6 +205,9 @@ def plot():
 
         cat = node_categories[node]
         categories.append(cat)
+
+        det = node_details[node]
+        details.append(det)
 
         if node == 'main':
             colors.append('#ffffff')
@@ -207,7 +226,10 @@ def plot():
         x=node_x, y=node_y,
         mode='markers+text',
         hoverinfo='text',
-        hovertext=categories,
+        hovertext=details,
+        hoverlabel=dict(
+            namelength=-1
+            ),
         text=names,
         textfont=dict(
             size=10,
