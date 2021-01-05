@@ -11,6 +11,7 @@ print('[INFO] Starting...')
 
 g_technique_id = ''
 g_technique_name = ''
+g_search_text = ''
 g_technique = None
 g_subs = None
 g_groups = None
@@ -31,6 +32,7 @@ config = {'displayModeBar': False}
 def plot():
     global g_technique_id
     global g_technique_name
+    global g_search_text
     global g_technique
     global g_subs
     global g_groups
@@ -40,6 +42,7 @@ def plot():
     
     is_grouped = False
     can_group = False
+    search_text = ''
     
     if request.method == 'GET':
         can_group = request.args.get('can_group')
@@ -50,15 +53,16 @@ def plot():
                 is_grouped = True
         search_text = request.args.get('search_text')
 
-    print('search_text: ' + search_text)
+    print('[INFO] search_text: ' + search_text)
 
     #g_technique_name = 'Access Token Manipulation'
-    if g_technique_id == '':
-        external_id = search_text
+    if g_technique_id == '' or search_text != g_search_text:
+        g_search_text = search_text
+        external_id = g_search_text
         print('[INFO] Fetching technique by id ' + external_id + '...')
         g_technique = g_cti.get_technique_by_external_id(g_cti_src, external_id)
         if not g_technique:
-            g_technique_name = search_text
+            g_technique_name = g_search_text
             print('[INFO] Fetching technique by name ' + g_technique_name + '...')
 
             g_technique = g_cti.get_technique_by_name(g_cti_src, g_technique_name)
