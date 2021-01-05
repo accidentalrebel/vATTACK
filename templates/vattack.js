@@ -4,6 +4,7 @@
 	var can_group = false;
 	var searchtext = $('#searchtext').val();
 	console.log(searchtext)
+	$('#container').html('PLEASE WAIT...');
 	if ( "{{ is_grouped }}" == "False" )
 	{
 	    can_group = true;

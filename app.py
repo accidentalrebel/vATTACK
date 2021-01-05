@@ -12,24 +12,6 @@ print('[INFO] Starting...')
 g_cti = importlib.import_module('mitre')
 g_cti_src = g_cti.setup_cti_source()
 print('[INFO] Finished setting up cti source.')
-g_technique_name = 'Application Layer Protocol'
-#g_technique_name = 'Access Token Manipulation'
-g_technique = g_cti.get_technique_by_name(g_cti_src, g_technique_name)
-print('[INFO] Finished fetching technique.')
-g_technique_id = g_cti.get_technique_id(g_cti_src, g_technique)
-print('[INFO] Finished fetching technique id.')
-g_subs = g_cti.get_subtechnique_for_technique(g_cti_src, g_technique_id);
-print('[INFO] Finished fetching subtechniques.')
-g_groups = g_cti.get_groups_using_technique(g_cti_src, g_technique_id)
-print('[INFO] Finished fetching groups.')
-g_mitigations = g_cti.get_mitigations_for_technique(g_cti_src, g_technique_id)
-print('[INFO] Finished fetching mitigations.')
-g_malwares = g_cti.get_malware_for_technique(g_cti_src, g_technique_id)
-print('[INFO] Finished fetching malwares.')
-g_tools = g_cti.get_tool_for_technique(g_cti_src, g_technique_id)
-print('[INFO] Finished fetching tools.')
-
-print('[INFO] Done setting up source.')
 
 app = Flask(__name__)
 app.debug = True
@@ -50,6 +32,23 @@ def plot():
         search_text = request.args.get('search_text')
 
     print('search_text: ' + search_text)
+
+    g_technique_name = search_text
+    #g_technique_name = 'Access Token Manipulation'
+    g_technique = g_cti.get_technique_by_name(g_cti_src, g_technique_name)
+    print('[INFO] Finished fetching technique.')
+    g_technique_id = g_cti.get_technique_id(g_cti_src, g_technique)
+    print('[INFO] Finished fetching technique id.')
+    g_subs = g_cti.get_subtechnique_for_technique(g_cti_src, g_technique_id);
+    print('[INFO] Finished fetching subtechniques.')
+    g_groups = g_cti.get_groups_using_technique(g_cti_src, g_technique_id)
+    print('[INFO] Finished fetching groups.')
+    g_mitigations = g_cti.get_mitigations_for_technique(g_cti_src, g_technique_id)
+    print('[INFO] Finished fetching mitigations.')
+    g_malwares = g_cti.get_malware_for_technique(g_cti_src, g_technique_id)
+    print('[INFO] Finished fetching malwares.')
+    g_tools = g_cti.get_tool_for_technique(g_cti_src, g_technique_id)
+    print('[INFO] Finished fetching tools.')
 
     points, state = Points(), InputDeviceState()
 
