@@ -6,11 +6,13 @@
     {% include "vattack.js" %}
     <script>
     $(document).ready( function() {
-	$('#plot').click(show_plot);
+	$('#search').click(show_plot);
     });
     </script>
+
+    <input type="text" id="searchtext" name="searchtext"><br>
+    <input type="button" id="search" value="Search" />
     
-    <input type="button" id="plot" value="Load" />
     <div id="container"></div>
     
     <!-- {{ div_placeholder }} -->

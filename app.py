@@ -12,8 +12,8 @@ print('[INFO] Starting...')
 g_cti = importlib.import_module('mitre')
 g_cti_src = g_cti.setup_cti_source()
 print('[INFO] Finished setting up cti source.')
-#g_technique_name = 'Application Layer Protocol'
-g_technique_name = 'Access Token Manipulation'
+g_technique_name = 'Application Layer Protocol'
+#g_technique_name = 'Access Token Manipulation'
 g_technique = g_cti.get_technique_by_name(g_cti_src, g_technique_name)
 print('[INFO] Finished fetching technique.')
 g_technique_id = g_cti.get_technique_id(g_cti_src, g_technique)
@@ -47,6 +47,9 @@ def plot():
                 is_grouped = False
             else:
                 is_grouped = True
+        search_text = request.args.get('search_text')
+
+    print('search_text: ' + search_text)
 
     points, state = Points(), InputDeviceState()
 
