@@ -1,8 +1,8 @@
-from taxii2client.v20 import Server, Collection
+from taxii2client.v20 import Collection
 from stix2 import Filter, TAXIICollectionSource, FileSystemSource
-import sys
 
 IS_ONLINE = False
+
 
 def get_technique_by_name(src, name):
     filt = [
@@ -11,6 +11,7 @@ def get_technique_by_name(src, name):
     ]
     return src.query(filt)
 
+
 def get_technique_by_external_id(src, _id):
     filt = [
         Filter('type', '=', 'attack-pattern'),
@@ -18,13 +19,16 @@ def get_technique_by_external_id(src, _id):
     ]
     return src.query(filt)
 
+
 def get_technique_id(cti_src, technique):
     technique_id = technique[0]['id']
     return technique_id
 
+
 def get_technique_name(cti_src, technique):
     technique_name = technique[0]['name']
     return technique_name
+
 
 def get_related(src, src_type, rel_type, target_type, reverse=False):
     """build> relationship mappings
@@ -41,34 +45,35 @@ def get_related(src, src_type, rel_type, target_type, reverse=False):
         Filter('relationship_type', '=', rel_type)
     ])
 
-    # stix_id => [ { relationship, related_object_id } for each related object ]
-    id_to_related = {} 
+    id_to_related = {}
 
     # build the dict
     for relationship in relationships:
-        if (src_type in relationship.source_ref and target_type in relationship.target_ref):
-            if (relationship.source_ref in id_to_related and not reverse) or (relationship.target_ref in id_to_related and reverse):
+        if src_type in relationship.source_ref and \
+           target_type in relationship.target_ref:
+            if (relationship.source_ref in id_to_related and not reverse) or\
+               (relationship.target_ref in id_to_related and reverse):
                 # append to existing entry
-                if not reverse: 
+                if not reverse:
                     id_to_related[relationship.source_ref].append({
                         'relationship': relationship,
                         'id': relationship.target_ref
                     })
-                else: 
+                else:
                     id_to_related[relationship.target_ref].append({
-                        'relationship': relationship, 
+                        'relationship': relationship,
                         'id': relationship.source_ref
                     })
-            else: 
+            else:
                 # create a new entry
-                if not reverse: 
+                if not reverse:
                     id_to_related[relationship.source_ref] = [{
-                        'relationship': relationship, 
+                        'relationship': relationship,
                         'id': relationship.target_ref
                     }]
                 else:
                     id_to_related[relationship.target_ref] = [{
-                        'relationship': relationship, 
+                        'relationship': relationship,
                         'id': relationship.source_ref
                     }]
     # all objects of relevant type
@@ -94,7 +99,7 @@ def get_related(src, src_type, rel_type, target_type, reverse=False):
         value = []
         for related in id_to_related[stix_id]:
             if not related['id'] in id_to_target:
-                continue # targeting a revoked object
+                continue
             value.append({
                 'object': id_to_target[related['id']],
                 'relationship': related['relationship']
@@ -102,11 +107,17 @@ def get_related(src, src_type, rel_type, target_type, reverse=False):
         output[stix_id] = value
     return output
 
+
 def groups_using_software(src):
-    return get_related(src, 'intrusion-set', 'uses', 'tool', reverse=True) | get_related(src, 'intrusion-set', 'uses', 'malware', reverse=True)
+    return get_related(src, 'intrusion-set', 'uses', 'tool', reverse=True) or \
+        get_related(src, 'intrusion-set', 'uses', 'malware', reverse=True)
+
 
 def get_groups_using_any_technique(src):
-    return get_related(src, 'intrusion-set', 'uses', 'attack-pattern', reverse=True)
+    return get_related(src, 'intrusion-set',
+                       'uses', 'attack-pattern',
+                       reverse=True)
+
 
 def get_groups_using_technique(src, technique_id):
     all_groups = get_groups_using_any_technique(src)
@@ -114,8 +125,12 @@ def get_groups_using_technique(src, technique_id):
         return all_groups[technique_id]
     return None
 
+
 def get_mitigations_for_any_technique(src):
-    return get_related(src, "course-of-action", "mitigates", "attack-pattern", reverse=True)
+    return get_related(src, "course-of-action",
+                       "mitigates", "attack-pattern",
+                       reverse=True)
+
 
 def get_mitigations_for_technique(src, technique_id):
     all_mitigations = get_mitigations_for_any_technique(src)
@@ -123,8 +138,10 @@ def get_mitigations_for_technique(src, technique_id):
         return all_mitigations[technique_id]
     return None
 
+
 def get_malware_for_any_technique(src):
     return get_related(src, "malware", "uses", "attack-pattern", reverse=True)
+
 
 def get_malware_for_technique(src, technique_id):
     all_malware = get_malware_for_any_technique(src)
@@ -132,8 +149,10 @@ def get_malware_for_technique(src, technique_id):
         return all_malware[technique_id]
     return None
 
+
 def get_tool_for_any_technique(src):
     return get_related(src, "tool", "uses", "attack-pattern", reverse=True)
+
 
 def get_tool_for_technique(src, technique_id):
     all_tool = get_tool_for_any_technique(src)
@@ -141,14 +160,19 @@ def get_tool_for_technique(src, technique_id):
         return all_tool[technique_id]
     return None
 
+
 def get_all_subtechniques(src):
-    return get_related(src, "attack-pattern", "subtechnique-of", "attack-pattern", reverse=True)
+    return get_related(src, "attack-pattern",
+                       "subtechnique-of", "attack-pattern",
+                       reverse=True)
+
 
 def get_subtechnique_for_technique(src, technique_id):
     all_subs = get_all_subtechniques(src)
     if technique_id in all_subs:
         return all_subs[technique_id]
     return None
+
 
 def setup_cti_source():
     if IS_ONLINE:
@@ -158,8 +182,6 @@ def setup_cti_source():
             'mobile_attack': '2f669986-b40b-4423-b720-4396ca6a462b',
             'ics_attack': '02c3ef24-9cd4-48f3-a99f-b74ce24f1d34'
         }
-        server = Server('https://cti-taxii.mitre.org/taxii/')
-        api_root = server.api_roots[0]
 
         print('Getting collection...')
         collection = Collection(f'https://cti-taxii.mitre.org/stix/collections/{collections["enterprise_attack"]}/')
@@ -170,6 +192,6 @@ def setup_cti_source():
 
     return cti_src
 
+
 if __name__ == "__main__":
     cti_src = setup_cti_source()
-    get_groups(cti_src)

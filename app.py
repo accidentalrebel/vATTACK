@@ -1,13 +1,8 @@
 from flask import Flask, render_template, Markup, request
-from plotly.callbacks import Points, InputDeviceState
 from bs4 import BeautifulSoup
 import importlib
 import plotly.graph_objects as go
 import networkx as nx
-import plotly.express as px
-import json
-import sys
-import re
 import textwrap
 from markdown import markdown
 
@@ -32,6 +27,7 @@ app.debug = True
 
 config = {'displayModeBar': False}
 
+
 @app.route('/plot')
 def plot():
     global g_technique_id
@@ -43,11 +39,11 @@ def plot():
     global g_mitigations
     global g_malwares
     global g_tools
-    
+
     is_grouped = False
     can_group = False
     search_text = ''
-    
+
     if request.method == 'GET':
         can_group = request.args.get('can_group')
         if can_group:
@@ -59,7 +55,7 @@ def plot():
 
     print('[INFO] search_text: ' + search_text)
 
-    #g_technique_name = 'Access Token Manipulation'
+    # g_technique_name = 'Access Token Manipulation'
     if g_technique_id == '' or search_text != g_search_text:
         g_search_text = search_text
         external_id = g_search_text
@@ -69,58 +65,67 @@ def plot():
             g_technique_name = g_search_text
             print('[INFO] Fetching technique by name ' + g_technique_name + '...')
 
-            g_technique = g_cti.get_technique_by_name(g_cti_src, g_technique_name)
+            g_technique = g_cti.get_technique_by_name(g_cti_src,
+                                                      g_technique_name)
         else:
-            g_technique_name = g_cti.get_technique_name(g_cti_src, g_technique)
+            g_technique_name = g_cti.get_technique_name(g_cti_src,
+                                                        g_technique)
 
         g_technique_id = g_cti.get_technique_id(g_cti_src, g_technique)
         print('[INFO] Finished fetching technique: ' + g_technique_name)
 
-        # g_subs = g_cti.get_subtechnique_for_technique(g_cti_src, g_technique_id);
-        # print('[INFO] Finished fetching subtechniques.')
-        # g_groups = g_cti.get_groups_using_technique(g_cti_src, g_technique_id)
-        # print('[INFO] Finished fetching groups.')
-        # g_mitigations = g_cti.get_mitigations_for_technique(g_cti_src, g_technique_id)
-        # print('[INFO] Finished fetching mitigations.')
-        # g_malwares = g_cti.get_malware_for_technique(g_cti_src, g_technique_id)
-        # print('[INFO] Finished fetching malwares.')
-        # g_tools = g_cti.get_tool_for_technique(g_cti_src, g_technique_id)
-        # print('[INFO] Finished fetching tools.')
-
-    points, state = Points(), InputDeviceState()
+        g_subs = g_cti.get_subtechnique_for_technique(g_cti_src,
+                                                      g_technique_id)
+        print('[INFO] Finished fetching subtechniques.')
+        g_groups = g_cti.get_groups_using_technique(g_cti_src,
+                                                    g_technique_id)
+        print('[INFO] Finished fetching groups.')
+        g_mitigations = g_cti.get_mitigations_for_technique(g_cti_src,
+                                                            g_technique_id)
+        print('[INFO] Finished fetching mitigations.')
+        g_malwares = g_cti.get_malware_for_technique(g_cti_src,
+                                                     g_technique_id)
+        print('[INFO] Finished fetching malwares.')
+        g_tools = g_cti.get_tool_for_technique(g_cti_src,
+                                               g_technique_id)
+        print('[INFO] Finished fetching tools.')
 
     G = nx.random_geometric_graph(50, 0.125)
     G = nx.Graph()
 
     desc = g_technique[0].description
     desc = parse_details(g_technique_name, desc)
-    
-    G.add_node('main', name=g_technique_name, category='technique', details=desc)
-        
+
+    G.add_node('main', name=g_technique_name, category='technique',
+               details=desc)
+
     i = 1
     if g_groups:
         for g in g_groups:
             group_name = g['object']['name']
             desc = parse_details(group_name, g['object']['description'])
-            G.add_node(str(i), name=group_name, category='threat_group', details=desc)
+            G.add_node(str(i), name=group_name, category='threat_group',
+                       details=desc)
             G.add_edge('main', str(i))
-            i+=1
+            i += 1
 
     if g_mitigations:
         for m in g_mitigations:
             mitigation_name = m['object']['name']
             desc = parse_details(mitigation_name, m['object']['description'])
-            G.add_node(str(i), name=mitigation_name, category='prevention', details=desc)
+            G.add_node(str(i), name=mitigation_name, category='prevention',
+                       details=desc)
             G.add_edge('main', str(i))
-            i+=1
+            i += 1
 
     if g_malwares:
         for m in g_malwares:
             malware_name = m['object']['name']
             desc = parse_details(malware_name, m['object']['description'])
-            G.add_node(str(i), name=malware_name, category='malware', details=desc)
+            G.add_node(str(i), name=malware_name, category='malware',
+                       details=desc)
             G.add_edge('main', str(i))
-            i+=1
+            i += 1
 
     if g_tools:
         for t in g_tools:
@@ -128,23 +133,24 @@ def plot():
             desc = parse_details(tool_name, t['object']['description'])
             G.add_node(str(i), name=tool_name, category='tool', details=desc)
             G.add_edge('main', str(i))
-            i+=1
+            i += 1
 
     if g_subs:
         for s in g_subs:
             sub_name = s['object']['name']
             desc = parse_details(sub_name, s['object']['description'])
-            G.add_node(str(i), name=sub_name, category='technique', details=desc)
+            G.add_node(str(i), name=sub_name, category='technique',
+                       details=desc)
             G.add_edge('main', str(i))
-            i+=1
+            i += 1
 
-    fixed_pos = {'main':(0,0)}
+    fixed_pos = {'main': (0, 0)}
     pos = nx.spring_layout(G, pos=fixed_pos, fixed=['main'])
 
     node_names = nx.get_node_attributes(G, 'name')
     node_categories = nx.get_node_attributes(G, 'category')
     node_details = nx.get_node_attributes(G, 'details')
-    
+
     if is_grouped:
         # Adjust positions for grouping
         for node in G.nodes:
@@ -169,8 +175,8 @@ def plot():
     edge_x = []
     edge_y = []
     for edge in G.edges:
-        x0,y0 = pos[edge[0]]
-        x1,y1 = pos[edge[1]]
+        x0, y0 = pos[edge[0]]
+        x1, y1 = pos[edge[1]]
 
         edge_x.append(x0)
         edge_x.append(x1)
@@ -185,7 +191,7 @@ def plot():
         hoverinfo='none',
         mode='lines')
 
-    ## NODES
+    # NODES
 
     node_x = []
     node_y = []
@@ -197,7 +203,7 @@ def plot():
     for node in G.nodes:
         names.append(node_names[node])
         # names.append(node)
-        x,y = pos[node]
+        x, y = pos[node]
         node_x.append(x)
         node_y.append(y)
 
@@ -216,7 +222,7 @@ def plot():
         elif cat == 'malware':
             colors.append('#ff8800')
         elif cat == 'tool':
-            colors.append('#0352fc')            
+            colors.append('#0352fc')
         else:
             colors.append('#ff00ff')
 
@@ -237,9 +243,9 @@ def plot():
         marker=dict(
             showscale=False,
             # colorscale options
-            #'Greys' | 'YlGnBu' | 'Greens' | 'YlOrRd' | 'Bluered' | 'RdBu' |
-            #'Reds' | 'Blues' | 'Picnic' | 'Rainbow' | 'Portland' | 'Jet' |
-            #'Hot' | 'Blackbody' | 'Earth' | 'Electric' | 'Viridis' |
+            # 'Greys' | 'YlGnBu' | 'Greens' | 'YlOrRd' | 'Bluered' | 'RdBu' |
+            # 'Reds' | 'Blues' | 'Picnic' | 'Rainbow' | 'Portland' | 'Jet' |
+            # 'Hot' | 'Blackbody' | 'Earth' | 'Electric' | 'Viridis' |
             colorscale='YlGnBu',
             reversescale=True,
             color=colors,
@@ -252,30 +258,35 @@ def plot():
             ),
             line_width=4))
 
-    ## DRAW
+    # DRAW
     fig = go.Figure(data=[edge_trace, node_trace],
-                 layout=go.Layout(
+                    layout=go.Layout(
                     # title='<br>VAtt&ck made with Python',
                     # titlefont_size=16,
-                    showlegend=False,
-                    hovermode='closest',
-                    margin=dict(b=20,l=5,r=5,t=40),
-                    annotations=[ dict(
-                        text='VAtt&ck - Visual Att&ck',
-                        showarrow=False,
-                        xref='paper', yref='paper',
-                        x=0.005, y=-0.002 ) ],
-                    xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-                    yaxis=dict(showgrid=False, zeroline=False, showticklabels=False))
+                        showlegend=False,
+                        hovermode='closest',
+                        margin=dict(b=20, l=5, r=5, t=40),
+                        annotations=[dict(
+                            text='VAtt&ck - Visual Att&ck',
+                            showarrow=False,
+                            xref='paper', yref='paper',
+                            x=0.005, y=-0.002)],
+                        xaxis=dict(showgrid=False, zeroline=False,
+                                   showticklabels=False),
+                        yaxis=dict(showgrid=False, zeroline=False,
+                                   showticklabels=False))
                     )
 
     my_plot_div = fig.to_html(full_html=False, config=config)
-    
-    return render_template('plotter.html', plot_div=Markup(my_plot_div), is_grouped=str(is_grouped))
+
+    return render_template('plotter.html', plot_div=Markup(my_plot_div),
+                           is_grouped=str(is_grouped))
+
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     return render_template('index.html')
+
 
 def parse_details(name, desc):
 
@@ -293,7 +304,7 @@ def parse_details(name, desc):
 
     desc = desc.replace('[break]', '<br /><br />')
     print(desc)
-    
+
     splitted = desc.split('\n\n')
     wrapper = textwrap.TextWrapper(width=120)
 
