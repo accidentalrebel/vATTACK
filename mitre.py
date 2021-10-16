@@ -1,5 +1,6 @@
 from taxii2client.v20 import Collection
 from stix2 import Filter, TAXIICollectionSource, FileSystemSource
+from stix2 import MemoryStore
 
 IS_ONLINE = False
 
@@ -11,12 +12,12 @@ def get_technique_by_name(src, name):
     ]
     return src.query(filt)
 
-
 def get_technique_by_external_id(src, _id):
     filt = [
         Filter('type', '=', 'attack-pattern'),
         Filter("external_references.external_id", "=", _id)
     ]
+
     return src.query(filt)
 
 
@@ -188,7 +189,8 @@ def setup_cti_source():
         print('Collection received.')
         cti_src = TAXIICollectionSource(collection)
     else:
-        cti_src = FileSystemSource('./cti/enterprise-attack')
+        cti_src = MemoryStore()
+        cti_src.load_from_file('./cti/enterprise-attack/enterprise-attack.json')
 
     return cti_src
 
