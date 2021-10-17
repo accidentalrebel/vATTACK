@@ -2,6 +2,7 @@
 <script>
   is_software_visible = "{{ is_software_visible }}";
   is_groups_visible = "{{ is_groups_visible }}";
+  is_mitigations_visible = "{{ is_mitigations_visible }}";
   $('#group').click(show_plot);
   $('#software').click(function() {
       if ( is_software_visible == "True" )
@@ -29,19 +30,24 @@
       }
       $('#apply').show();
   });
+  $('#mitigations').click(function() {
+      if ( is_mitigations_visible == "True" )
+      {
+	  $('#mitigations').val("Mitigations: Disabled");
+	  is_mitigations_visible = "False";
+      }
+      else
+      {
+	  $('#mitigations').val("Mitigations: Enabled");	  
+	  is_mitigations_visible = "True";
+      }
+      $('#apply').show();
+  });
   $('#apply').click(function() {
       console.log("clicked");
-      show_plot(is_software_visible, is_groups_visible);
+      show_plot(is_software_visible, is_groups_visible, is_mitigations_visible);
   });
 </script>
-
-<!-- <input type="button" id="group" value= -->
-<!--        {% if is_grouped == "True"  %} -->
-<!--        "Ungroup " -->
-<!--        {% else %} -->
-<!--        "Group " -->
-<!--        {% endif %} -->
-<!--        /> -->
 
 <input type="button" id="groups" value=
        {% if is_groups_visible == "True" %}
@@ -56,6 +62,14 @@
        "Software: Enabled"
        {% else %}
        "Software: Disabled"
+       {% endif %}
+       />
+
+<input type="button" id="mitigations" value=
+       {% if is_mitigations_visible == "True" %}
+       "Mitigations: Enabled"
+       {% else %}
+       "Mitigations: Disabled"
        {% endif %}
        />
 

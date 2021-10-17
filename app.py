@@ -43,6 +43,7 @@ def plot():
     is_grouped = False
     is_software_visible=True if request.args.get('is_software_visible') == "True" else False
     is_groups_visible=True if request.args.get('is_groups_visible') == "True" else False
+    is_mitigations_visible=True if request.args.get('is_mitigations_visible') == "True" else False
     can_group = False
     search_text = ''
 
@@ -113,7 +114,7 @@ def plot():
             G.add_edge('main', str(i))
             i += 1
 
-    if g_mitigations:
+    if g_mitigations and is_mitigations_visible:
         for m in g_mitigations:
             mitigation_name = m['object']['name']
             desc = parse_details(mitigation_name, m['object']['description'])
@@ -284,6 +285,7 @@ def plot():
     return render_template('plotter.html', plot_div=Markup(my_plot_div),
                            is_grouped=str(is_grouped),
                            is_groups_visible=str(is_groups_visible),
+                           is_mitigations_visible=str(is_mitigations_visible),
                            is_software_visible=str(is_software_visible))
 
 @app.route('/', methods=['GET', 'POST'])

@@ -1,9 +1,11 @@
 <script type="text/javascript">
-    function show_plot(is_software_visible, is_groups_visible) {
+    function show_plot(is_software_visible, is_groups_visible, is_mitigations_visible) {
 	if ( is_software_visible == null )
 	    is_software_visible = "False";
-	if ( is_groups_visible == null )
+ 	if ( is_groups_visible == null )
 	    is_groups_visible = "False";
+	if ( is_mitigations_visible == null )
+	    is_mitigations_visible = "False";
 	
 	var can_group = true;
 	var searchtext = $('#searchtext').val()
@@ -19,6 +21,7 @@
 		can_group: can_group,
 		search_text: searchtext,
 		is_groups_visible: is_groups_visible,
+		is_mitigations_visible: is_mitigations_visible,
 		is_software_visible: is_software_visible
 	    }
 	}).done(function (reply) {
