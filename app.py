@@ -44,6 +44,7 @@ def plot():
     is_tools_visible=True if request.args.get('is_tools_visible') == "True" else False
     is_groups_visible=True if request.args.get('is_groups_visible') == "True" else False
     is_mitigations_visible=True if request.args.get('is_mitigations_visible') == "True" else False
+    is_subtechniques_visible=True if request.args.get('is_subtechniques_visible') == "True" else False
     is_malware_visible=True if request.args.get('is_malware_visible') == "True" else False
     can_group = False
     search_text = ''
@@ -141,7 +142,7 @@ def plot():
             G.add_edge('main', str(i))
             i += 1
 
-    if g_subs:
+    if g_subs and is_subtechniques_visible:
         for s in g_subs:
             sub_name = s['object']['name']
             desc = parse_details(sub_name, s['object']['description'])
@@ -287,6 +288,7 @@ def plot():
                            is_grouped=str(is_grouped),
                            is_groups_visible=str(is_groups_visible),
                            is_mitigations_visible=str(is_mitigations_visible),
+                           is_subtechniques_visible=str(is_subtechniques_visible),
                            is_malware_visible=str(is_malware_visible),
                            is_tools_visible=str(is_tools_visible))
 
