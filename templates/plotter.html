@@ -1,6 +1,14 @@
 {% include "vattack.js" %}
 <script>
+  is_software_visible_temp2 = "{{ is_software_visible }}";
+  console.log("########## " + is_software_visible_temp2);
   $('#group').click(show_plot);
+  $('#software').click(function() {
+      if ( is_software_visible_temp2 == "True" )
+	  show_plot("False");
+      else
+	  show_plot("True");
+  });
 </script>
 
 <input type="button" id="group" value=
@@ -8,6 +16,14 @@
 "Ungroup "
 {% else %}
 "Group "
+{% endif %}
+/>
+
+<input type="button" id="software" value=
+{% if is_software_visible == "True" %}
+"Hide Software "
+{% else %}
+"Show Software "
 {% endif %}
 />
 {{ plot_div }}

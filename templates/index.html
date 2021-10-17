@@ -7,7 +7,9 @@
     {% include "vattack.js" %}
     <script>
     $(document).ready( function() {
-	$('#search').click(show_plot);
+	$('#search').click(function() {
+	    show_plot("True");
+	});
     });
     </script>
     <h1>vATT&CK (Visual ATT&CK)</h1>

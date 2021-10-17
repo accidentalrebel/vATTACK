@@ -41,6 +41,7 @@ def plot():
     global g_tools
 
     is_grouped = False
+    is_software_visible_temp1=request.args.get('is_software_visible')
     can_group = False
     search_text = ''
 
@@ -278,7 +279,7 @@ def plot():
     my_plot_div = fig.to_html(full_html=False, config=config)
 
     return render_template('plotter.html', plot_div=Markup(my_plot_div),
-                           is_grouped=str(is_grouped))
+                           is_grouped=str(is_grouped), is_software_visible=str(is_software_visible_temp1))
 
 
 @app.route('/', methods=['GET', 'POST'])
