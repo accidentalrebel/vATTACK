@@ -41,7 +41,7 @@ def plot():
     global g_tools
 
     is_grouped = False
-    is_software_visible_temp1=request.args.get('is_software_visible')
+    is_software_visible_temp1=True if request.args.get('is_software_visible') == "True" else False
     can_group = False
     search_text = ''
 
@@ -84,9 +84,11 @@ def plot():
         g_mitigations = g_cti.get_mitigations_for_technique(g_cti_src,
                                                             g_technique_id)
         print('[INFO] Finished fetching mitigations.')
+
         g_malwares = g_cti.get_malware_for_technique(g_cti_src,
                                                      g_technique_id)
         print('[INFO] Finished fetching malwares.')
+
         g_tools = g_cti.get_tool_for_technique(g_cti_src,
                                                g_technique_id)
         print('[INFO] Finished fetching tools.')
@@ -128,7 +130,7 @@ def plot():
             G.add_edge('main', str(i))
             i += 1
 
-    if g_tools:
+    if g_tools and is_software_visible_temp1:
         for t in g_tools:
             tool_name = t['object']['name']
             desc = parse_details(tool_name, t['object']['description'])
