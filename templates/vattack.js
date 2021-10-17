@@ -1,7 +1,6 @@
 <script type="text/javascript">
     function show_plot() {
-	console.log(">>>>>>>> {{ is_grouped }}");
-	var can_group = false;
+	var can_group = true;
 	var searchtext = $('#searchtext').val();
 	console.log(searchtext)
 	$('#container').html('PLEASE WAIT...');
