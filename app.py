@@ -41,7 +41,8 @@ def plot():
     global g_tools
 
     is_grouped = False
-    is_software_visible_temp1=True if request.args.get('is_software_visible') == "True" else False
+    is_software_visible=True if request.args.get('is_software_visible') == "True" else False
+    is_groups_visible=True if request.args.get('is_groups_visible') == "True" else False
     can_group = False
     search_text = ''
 
@@ -103,7 +104,7 @@ def plot():
                details=desc)
 
     i = 1
-    if g_groups:
+    if g_groups and is_groups_visible:
         for g in g_groups:
             group_name = g['object']['name']
             desc = parse_details(group_name, g['object']['description'])
@@ -130,7 +131,7 @@ def plot():
             G.add_edge('main', str(i))
             i += 1
 
-    if g_tools and is_software_visible_temp1:
+    if g_tools and is_software_visible:
         for t in g_tools:
             tool_name = t['object']['name']
             desc = parse_details(tool_name, t['object']['description'])
@@ -281,8 +282,9 @@ def plot():
     my_plot_div = fig.to_html(full_html=False, config=config)
 
     return render_template('plotter.html', plot_div=Markup(my_plot_div),
-                           is_grouped=str(is_grouped), is_software_visible=str(is_software_visible_temp1))
-
+                           is_grouped=str(is_grouped),
+                           is_groups_visible=str(is_groups_visible),
+                           is_software_visible=str(is_software_visible))
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
