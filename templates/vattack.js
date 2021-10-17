@@ -1,7 +1,7 @@
 <script type="text/javascript">
-    function show_plot(is_software_visible, is_groups_visible, is_mitigations_visible) {
-	if ( is_software_visible == null )
-	    is_software_visible = "False";
+    function show_plot(is_tools_visible, is_groups_visible, is_mitigations_visible) {
+	if ( is_tools_visible == null )
+	    is_tools_visible = "False";
  	if ( is_groups_visible == null )
 	    is_groups_visible = "False";
 	if ( is_mitigations_visible == null )
@@ -22,7 +22,7 @@
 		search_text: searchtext,
 		is_groups_visible: is_groups_visible,
 		is_mitigations_visible: is_mitigations_visible,
-		is_software_visible: is_software_visible
+		is_tools_visible: is_tools_visible
 	    }
 	}).done(function (reply) {
 	    $('#container').html(reply);

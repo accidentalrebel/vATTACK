@@ -41,7 +41,7 @@ def plot():
     global g_tools
 
     is_grouped = False
-    is_software_visible=True if request.args.get('is_software_visible') == "True" else False
+    is_tools_visible=True if request.args.get('is_tools_visible') == "True" else False
     is_groups_visible=True if request.args.get('is_groups_visible') == "True" else False
     is_mitigations_visible=True if request.args.get('is_mitigations_visible') == "True" else False
     can_group = False
@@ -132,7 +132,7 @@ def plot():
             G.add_edge('main', str(i))
             i += 1
 
-    if g_tools and is_software_visible:
+    if g_tools and is_tools_visible:
         for t in g_tools:
             tool_name = t['object']['name']
             desc = parse_details(tool_name, t['object']['description'])
@@ -286,7 +286,7 @@ def plot():
                            is_grouped=str(is_grouped),
                            is_groups_visible=str(is_groups_visible),
                            is_mitigations_visible=str(is_mitigations_visible),
-                           is_software_visible=str(is_software_visible))
+                           is_tools_visible=str(is_tools_visible))
 
 @app.route('/', methods=['GET', 'POST'])
 def index():

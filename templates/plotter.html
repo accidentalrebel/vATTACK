@@ -1,19 +1,19 @@
 {% include "vattack.js" %}
 <script>
-  is_software_visible = "{{ is_software_visible }}";
+  is_tools_visible = "{{ is_tools_visible }}";
   is_groups_visible = "{{ is_groups_visible }}";
   is_mitigations_visible = "{{ is_mitigations_visible }}";
   $('#group').click(show_plot);
-  $('#software').click(function() {
-      if ( is_software_visible == "True" )
+  $('#tool').click(function() {
+      if ( is_tools_visible == "True" )
       {
-	  $('#software').val("Software: Disabled");
-	  is_software_visible = "False";
+	  $('#tool').val("Tools: Disabled");
+	  is_tools_visible = "False";
       }
       else
       {
-	  $('#software').val("Software: Enabled");
-	  is_software_visible = "True";
+	  $('#tool').val("Tools: Enabled");
+	  is_tools_visible = "True";
       }
       $('#apply').show();
   });
@@ -45,7 +45,7 @@
   });
   $('#apply').click(function() {
       console.log("clicked");
-      show_plot(is_software_visible, is_groups_visible, is_mitigations_visible);
+      show_plot(is_tools_visible, is_groups_visible, is_mitigations_visible);
   });
 </script>
 
@@ -57,11 +57,11 @@
        {% endif %}
        />
 
-<input type="button" id="software" value=
-       {% if is_software_visible == "True" %}
-       "Software: Enabled"
+<input type="button" id="tool" value=
+       {% if is_tools_visible == "True" %}
+       "Tools: Enabled"
        {% else %}
-       "Software: Disabled"
+       "Tools: Disabled"
        {% endif %}
        />
 
