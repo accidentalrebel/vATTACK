@@ -25,7 +25,7 @@ print('[INFO] Finished setting up cti source.')
 app = Flask(__name__)
 app.debug = True
 
-config = {'displayModeBar': False}
+config = {'displayModeBar': True}
 
 
 @app.route('/plot')
@@ -261,13 +261,11 @@ def plot():
     # DRAW
     fig = go.Figure(data=[edge_trace, node_trace],
                     layout=go.Layout(
-                    # title='<br>VAtt&ck made with Python',
-                    # titlefont_size=16,
                         showlegend=False,
                         hovermode='closest',
-                        margin=dict(b=20, l=5, r=5, t=40),
+                        margin=dict(b=20, l=5, r=5, t=20),
                         annotations=[dict(
-                            text='VAtt&ck - Visual Att&ck',
+                            text='vATT&Ck (Visual ATT&CK) - Mitre ATT&CK Relationship Visualizer',
                             showarrow=False,
                             xref='paper', yref='paper',
                             x=0.005, y=-0.002)],

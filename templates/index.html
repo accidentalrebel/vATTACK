@@ -1,5 +1,6 @@
 <html>
   <head>
+    <link rel="stylesheet" href="{{url_for('static', filename='styles.css') }}">
     <script type=text/javascript src="{{url_for('static', filename='jquery-3.5.1.js') }}"></script>
   </head>
   <body>
@@ -9,10 +10,13 @@
 	$('#search').click(show_plot);
     });
     </script>
+    <h1>vATT&CK (Visual ATT&CK)</h1>
+    <b>Mitre ATT&CK Relationship Visualizer</b> by <a href="https://www.accidentalrebel.com">@accidentalrebel</a> - See project on [<a href="https://github.com/accidentalrebel/vATTACK">Github</a>]
+    <br/><br/>
 
     <form onSubmit="show_plot(); return false;">
-    <input type="text" id="searchtext" name="searchtext"><br>
-    <input type="button" id="search" value="Search" />
+      <input type="text" id="searchtext" name="searchtext" placeholder="Technique ID or name">
+      <input type="button" id="search" value="Search" />
     </form>
 
     <div id="container"></div>

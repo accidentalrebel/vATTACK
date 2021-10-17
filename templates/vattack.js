@@ -3,7 +3,7 @@
 	var can_group = true;
 	var searchtext = $('#searchtext').val();
 	console.log(searchtext)
-	$('#container').html('PLEASE WAIT...');
+	$('#container').html('Reticulating splines...');
 	if ( "{{ is_grouped }}" == "False" )
 	{
 	    can_group = true;
