@@ -44,6 +44,7 @@ def plot():
     is_tools_visible=True if request.args.get('is_tools_visible') == "True" else False
     is_groups_visible=True if request.args.get('is_groups_visible') == "True" else False
     is_mitigations_visible=True if request.args.get('is_mitigations_visible') == "True" else False
+    is_malware_visible=True if request.args.get('is_malware_visible') == "True" else False
     can_group = False
     search_text = ''
 
@@ -123,7 +124,7 @@ def plot():
             G.add_edge('main', str(i))
             i += 1
 
-    if g_malwares:
+    if g_malwares and is_malware_visible:
         for m in g_malwares:
             malware_name = m['object']['name']
             desc = parse_details(malware_name, m['object']['description'])
@@ -286,6 +287,7 @@ def plot():
                            is_grouped=str(is_grouped),
                            is_groups_visible=str(is_groups_visible),
                            is_mitigations_visible=str(is_mitigations_visible),
+                           is_malware_visible=str(is_malware_visible),
                            is_tools_visible=str(is_tools_visible))
 
 @app.route('/', methods=['GET', 'POST'])

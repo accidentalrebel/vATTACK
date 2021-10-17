@@ -3,6 +3,7 @@
   is_tools_visible = "{{ is_tools_visible }}";
   is_groups_visible = "{{ is_groups_visible }}";
   is_mitigations_visible = "{{ is_mitigations_visible }}";
+  is_malware_visible = "{{ is_malware_visible }}";
   $('#group').click(show_plot);
   $('#tool').click(function() {
       if ( is_tools_visible == "True" )
@@ -43,9 +44,22 @@
       }
       $('#apply').show();
   });
+  $('#malware').click(function() {
+      if ( is_malware_visible == "True" )
+      {
+	  $('#malware').val("Malware: Disabled");
+	  is_malware_visible = "False";
+      }
+      else
+      {
+	  $('#malware').val("Malware: Enabled");	  
+	  is_malware_visible = "True";
+      }
+      $('#apply').show();
+  });
   $('#apply').click(function() {
       console.log("clicked");
-      show_plot(is_tools_visible, is_groups_visible, is_mitigations_visible);
+      show_plot(is_tools_visible, is_groups_visible, is_mitigations_visible, is_malware_visible);
   });
 </script>
 
@@ -70,6 +84,13 @@
        "Mitigations: Enabled"
        {% else %}
        "Mitigations: Disabled"
+       {% endif %}
+       />
+<input type="button" id="malware" value=
+       {% if is_malware_visible == "True" %}
+       "Malware: Enabled"
+       {% else %}
+       "Malware: Disabled"
        {% endif %}
        />
 
